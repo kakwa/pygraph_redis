@@ -1,4 +1,4 @@
-pygraph_redis
-=============
+this directory provides libs manupilating tree inside a redis database
 
-Simple python Library to manipulate graph in redis
+
+## Key calculation ##
