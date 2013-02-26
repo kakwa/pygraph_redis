@@ -129,7 +129,7 @@ print attr2
 Graph navigation
 ----------------
 
-To navigate inside the graph, you have two function:
+To navigate inside the graph, you have two functions:
 
 ```python
 #get the predecessors of 'm2'
