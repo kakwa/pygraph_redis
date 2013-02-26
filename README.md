@@ -1,7 +1,7 @@
 pygraph\_redis
 ==============
 
-Simple python library to manipulate directed graphes in redis
+Simple python library to manipulate directed graphs in redis
 
 License
 =======
@@ -11,7 +11,7 @@ pygraph\_redis is released under the MIT Public License
 Description
 ===========
 
-pygraph\_redis is a simple library to manipulate directed graphes inside a redis database.
+pygraph\_redis is a simple library to manipulate directed graphs inside a redis database.
 
 In this library, a graph is a bunch of nodes, each node knows its predecessors 
 and its successors. A node can store some attributs (strings or sets of strings).
