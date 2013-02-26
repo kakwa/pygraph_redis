@@ -1,7 +1,7 @@
 pygraph\_redis
 ==============
 
-Simple python library to manipulate graphes in redis
+Simple python library to manipulate directed graphes in redis
 
 License
 =======
