@@ -28,7 +28,9 @@ python setup.py install
 How to use
 ==========
 
-The library is quite simple:
+First you need a redis database, it's up to you to install it.
+
+The library itself is quite simple:
 
 Initialization
 --------------
@@ -46,6 +48,9 @@ logging.basicConfig(format = u'%(message)s')
 logger = logging.getLogger(u'redis')
 logger.parent.setLevel(logging.DEBUG)
 
+#creating the redis connexion
+r_server = redis.Redis("localhost")
+
 #creating the graph object
 mygraph1 = Directed_graph(r_server, u'mygraph1', logger)
 
@@ -55,7 +60,8 @@ mygraph2 = Directed_graph(r_server, u'mygraph2', logger, separator = u'my_custom
 #creating the graph object with a "root" (improper name, I know)
 mygraph2 = Directed_graph(r_server, u'mygraph2', logger, has_root = True)
 #"has\_root = True" ensures that every node has a predecessor
-#if enabled, a node has at least root as a predecessor, but it has any other predecessor it doesn't have root
+#if enabled, a node has at least root as a predecessor, 
+#but if it has any other predecessor it doesn't have root as predecessor
 
 ```
 
@@ -72,7 +78,11 @@ Node creation:
 #   * 'attr1': set([u'51',u'69'])
 #   * 'attr2': '42'    
 
-mygraph1.write_on_node(u'm1', [u's1', u's2'], [u'p1', u'p2'],{u'attr1': set([u'51', u'69']), u'attr2': u'42'})
+mygraph1.write_on_node(u'm1',
+    [u's1', u's2'],
+    [u'p1', u'p2'],
+    {u'attr1': set([u'51', u'69']), u'attr2': u'42'}
+)
 ```
 
 Node edition:
@@ -80,7 +90,11 @@ Node edition:
 ```python
 #add new elements or edit existing elements of a node
 #it's exactly the same function as before
-mygraph1.write_on_node(u'm1', [u's4'], [], {u'attr3': set([u'16', u'32', u'64']), u'attr2': u'5150'})
+mygraph1.write_on_node(u'm1', 
+    [u's4'], 
+    [], 
+    {u'attr3': set([u'16', u'32', u'64']), u'attr2': u'5150'}
+)
 
 #remove some elements of a node (successors, predecessors, attributs)
 mygraph1.write_off_node(u"m1", [u"s1"], [u"p2"],[u'attr2'])
@@ -95,15 +109,19 @@ Node attributs manipulation
 To manipulate the attributs of a node:
 
 ```python
-#readd the node 'm1'
-mygraph1.write_on_node(u'm1', [u's1', u's2'], [u'p1', u'p2'],{u'attr1': set([u'51', u'69']), u'attr2': u'42'})
+#create the node 'm2'
+mygraph1.write_on_node(u'm2',
+    [u's1', u's2'],
+    [u'p1', u'p2'],
+    {u'attr1': set([u'51', u'69']), u'attr2': u'42'}
+)
 
 #get the set of attribut names
-set_of_attributs = mygraph1.get_attributs_list(u'm1')
+set_of_attributs = mygraph1.get_attributs_list(u'm2')
 print set_of_attributs
 
 #get a specific attribut
-attr2 = mygraph1.get_attribut(u'm1', u'attr2')
+attr2 = mygraph1.get_attribut(u'm2', u'attr2')
 print attr2
 
 ```
@@ -114,15 +132,15 @@ Graph navigation
 To navigate inside the graph, you have two function:
 
 ```python
-#get the predecessors of 'm1'
-predecessors = mygraph1.get_predecessors(u"m1")
+#get the predecessors of 'm2'
+predecessors = mygraph1.get_predecessors(u'm2')
 print predecessors
 
-#get the successors of 'm1'
+#get the successors of 'm2'
 successors = mygraph1.get_successors(u'm2')
 ```
 
-if you have the `has\_root` flag enable:
+if you have the `has_root` flag enable:
 
 ```python
 #get the "root" name
@@ -158,4 +176,4 @@ it must not be included in any node name or node attribut name (possible redis k
 About the logs
 --------------
 
-This library provides a lot of logs, most of them are debug, except possible redis key collision which is warning
+This library provides a lot of logs, most of them are debug, except possible redis key collision which is warning.
