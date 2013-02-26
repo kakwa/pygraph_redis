@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Pygraph redis by kakwa</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Pygraph redis</h1>
+          <h2>Simple python library to manipulate directed graphs in redis</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/kakwa/pygraph_redis/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/kakwa/pygraph_redis/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/kakwa/pygraph_redis" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>pygraph_redis</h1>
+
+<p>Simple python library to manipulate directed graphs in redis</p>
+
+<h1>License</h1>
+
+<p>pygraph_redis is released under the MIT Public License</p>
+
+<h1>Description</h1>
+
+<p>pygraph_redis is a simple library to manipulate directed graphs inside a redis database.</p>
+
+<p>In this library, a graph is a bunch of nodes, each node knows its predecessors 
+and its successors. A node can store some attributs (strings or sets of strings).</p>
+
+<h1>Installation</h1>
+
+<p>to install:</p>
+
+<div class="highlight"><pre>python setup.py install
+</pre></div>
+
+<h1>How to use</h1>
+
+<p>First you need a redis database, it's up to you to install it.</p>
+
+<p>The library itself is quite simple:</p>
+
+<h2>Initialization</h2>
+
+<p>Create an instance of "Directed_graph":</p>
+
+<div class="highlight"><pre><span class="c">#importing directed_graph</span>
+<span class="kn">from</span> <span class="nn">pygraph_redis.directed_graph</span> <span class="kn">import</span> <span class="n">Directed_graph</span>
+<span class="kn">import</span> <span class="nn">redis</span>
+
+<span class="c">#creating a basic logger</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span> <span class="o">=</span> <span class="s">u'</span><span class="si">%(message)s</span><span class="s">'</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">u'redis'</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="c">#creating the redis connexion</span>
+<span class="n">r_server</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="s">"localhost"</span><span class="p">)</span>
+
+<span class="c">#creating the graph object</span>
+<span class="n">mygraph1</span> <span class="o">=</span> <span class="n">Directed_graph</span><span class="p">(</span><span class="n">r_server</span><span class="p">,</span> <span class="s">u'mygraph1'</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+<span class="c">#creating the graph object with a different separator</span>
+<span class="n">mygraph2</span> <span class="o">=</span> <span class="n">Directed_graph</span><span class="p">(</span><span class="n">r_server</span><span class="p">,</span> <span class="s">u'mygraph2'</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">separator</span> <span class="o">=</span> <span class="s">u'my_custom_sep'</span><span class="p">)</span>
+
+<span class="c">#creating the graph object with a "root" (improper name, I know)</span>
+<span class="n">mygraph2</span> <span class="o">=</span> <span class="n">Directed_graph</span><span class="p">(</span><span class="n">r_server</span><span class="p">,</span> <span class="s">u'mygraph2'</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">has_root</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="c">#"has\_root = True" ensures that every node has a predecessor</span>
+<span class="c">#if enabled, a node has at least root as a predecessor, </span>
+<span class="c">#but if it has any other predecessor it doesn't have root as predecessor</span>
+
+</pre></div>
+
+<h2>Node manipulation</h2>
+
+<p>Node creation:</p>
+
+<div class="highlight"><pre><span class="c">#add node 'm1' to 'mygraph1' with:</span>
+<span class="c">#successors: 's1' and 's2'</span>
+<span class="c">#predecessors: 'p1' and 'p2'</span>
+<span class="c">#attributs:</span>
+<span class="c">#   * 'attr1': set([u'51',u'69'])</span>
+<span class="c">#   * 'attr2': '42'    </span>
+
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">write_on_node</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">,</span>
+    <span class="p">[</span><span class="s">u's1'</span><span class="p">,</span> <span class="s">u's2'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">u'p1'</span><span class="p">,</span> <span class="s">u'p2'</span><span class="p">],</span>
+    <span class="p">{</span><span class="s">u'attr1'</span><span class="p">:</span> <span class="nb">set</span><span class="p">([</span><span class="s">u'51'</span><span class="p">,</span> <span class="s">u'69'</span><span class="p">]),</span> <span class="s">u'attr2'</span><span class="p">:</span> <span class="s">u'42'</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+
+<p>Node edition:</p>
+
+<div class="highlight"><pre><span class="c">#add new elements or edit existing elements of a node</span>
+<span class="c">#it's exactly the same function as before</span>
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">write_on_node</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">,</span> 
+    <span class="p">[</span><span class="s">u's4'</span><span class="p">],</span> 
+    <span class="p">[],</span> 
+    <span class="p">{</span><span class="s">u'attr3'</span><span class="p">:</span> <span class="nb">set</span><span class="p">([</span><span class="s">u'16'</span><span class="p">,</span> <span class="s">u'32'</span><span class="p">,</span> <span class="s">u'64'</span><span class="p">]),</span> <span class="s">u'attr2'</span><span class="p">:</span> <span class="s">u'5150'</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c">#remove some elements of a node (successors, predecessors, attributs)</span>
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">write_off_node</span><span class="p">(</span><span class="s">u"m1"</span><span class="p">,</span> <span class="p">[</span><span class="s">u"s1"</span><span class="p">],</span> <span class="p">[</span><span class="s">u"p2"</span><span class="p">],[</span><span class="s">u'attr2'</span><span class="p">])</span>
+
+<span class="c">#completely delete a node</span>
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">)</span>
+</pre></div>
+
+<h2>Node attributs manipulation</h2>
+
+<p>To manipulate the attributs of a node:</p>
+
+<div class="highlight"><pre><span class="c">#create the node 'm2'</span>
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">write_on_node</span><span class="p">(</span><span class="s">u'm2'</span><span class="p">,</span>
+    <span class="p">[</span><span class="s">u's1'</span><span class="p">,</span> <span class="s">u's2'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">u'p1'</span><span class="p">,</span> <span class="s">u'p2'</span><span class="p">],</span>
+    <span class="p">{</span><span class="s">u'attr1'</span><span class="p">:</span> <span class="nb">set</span><span class="p">([</span><span class="s">u'51'</span><span class="p">,</span> <span class="s">u'69'</span><span class="p">]),</span> <span class="s">u'attr2'</span><span class="p">:</span> <span class="s">u'42'</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c">#get the set of attribut names</span>
+<span class="n">set_of_attributs</span> <span class="o">=</span> <span class="n">mygraph1</span><span class="o">.</span><span class="n">get_attributs_list</span><span class="p">(</span><span class="s">u'm2'</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">set_of_attributs</span>
+
+<span class="c">#get a specific attribut</span>
+<span class="n">attr2</span> <span class="o">=</span> <span class="n">mygraph1</span><span class="o">.</span><span class="n">get_attribut</span><span class="p">(</span><span class="s">u'm2'</span><span class="p">,</span> <span class="s">u'attr2'</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">attr2</span>
+
+</pre></div>
+
+<h2>Graph navigation</h2>
+
+<p>To navigate inside the graph, you have two functions:</p>
+
+<div class="highlight"><pre><span class="c">#get the predecessors of 'm2'</span>
+<span class="n">predecessors</span> <span class="o">=</span> <span class="n">mygraph1</span><span class="o">.</span><span class="n">get_predecessors</span><span class="p">(</span><span class="s">u'm2'</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">predecessors</span>
+
+<span class="c">#get the successors of 'm2'</span>
+<span class="n">successors</span> <span class="o">=</span> <span class="n">mygraph1</span><span class="o">.</span><span class="n">get_successors</span><span class="p">(</span><span class="s">u'm2'</span><span class="p">)</span>
+</pre></div>
+
+<p>if you have the <code>has_root</code> flag enable:</p>
+
+<div class="highlight"><pre><span class="c">#get the "root" name</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">mygraph1</span><span class="o">.</span><span class="n">get_root_name</span><span class="p">()</span>
+
+<span class="k">print</span> <span class="n">root</span>
+
+<span class="c">#get the successors of 'root'</span>
+<span class="n">successors</span> <span class="o">=</span> <span class="n">mygraph1</span><span class="o">.</span><span class="n">get_successors</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">successors</span>
+
+</pre></div>
+
+<h2>About the redis keys</h2>
+
+<p>Redis key format:</p>
+
+<pre><code>  &lt;graph name&gt;&lt;sep&gt;&lt;node_name&gt;&lt;sep&gt;&lt;variable_name&gt;[&lt;sep&gt;&lt;other&gt;]*
+
+  &lt;graph name&gt;: name of the graph
+  &lt;sep&gt;: the key fields separator 
+       (this string should not be in node_name or variable_name,
+        otherwise, there is a redis key collision possibility)
+  &lt;node_name&gt;: name of the node
+  &lt;variable_name&gt;: name of the variable
+  [&lt;sep&gt;&lt;other&gt;]: optional extension
+</code></pre>
+
+<p>To avoid key collision, you must carefully choose the key separator,
+it must not be included in any node name or node attribut name (possible redis key collision).</p>
+
+<h2>About the logs</h2>
+
+<p>This library provides a lot of logs, most of them are debug, except possible redis key collision which is warning.</p>
+        </section>
+
+        <footer>
+          Pygraph redis is maintained by <a href="https://github.com/kakwa">kakwa</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
