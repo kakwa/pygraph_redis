@@ -6,11 +6,11 @@ from distutils.core import setup
 
 setup(name='pygraph_redis',
       version='0.0.1',
-      description='Python Library to manipulate graph in redis',
+      description='Python Library to manipulate directed graphes in redis',
       author='Pierre-Francois Carpentier',
       author_email='carpentier.pf@gmail.com',
       license='MIT',
-      url='',
+      url='https://github.com/kakwa/pygraph_redis',
       install_requires=[
           "setuptools",
           "redis",
