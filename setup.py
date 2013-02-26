@@ -6,7 +6,7 @@ from distutils.core import setup
 
 setup(name='pygraph_redis',
       version='0.0.1',
-      description='Python Library to manipulate directed graphes in redis',
+      description='Python Library to manipulate directed graphs in redis',
       author='Pierre-Francois Carpentier',
       author_email='carpentier.pf@gmail.com',
       license='MIT',
