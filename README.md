@@ -53,7 +53,11 @@ mygraph1 = Directed_graph(r_server, u'mygraph1', logger)
 #  unicode  | unicode list | unicode list |      dictionnary of unicode 
 #           |              |              | or set of unicode (key: unicode)
 
-mygraph1.write_on_node(u'm1', [u's2'], [u'p1'], {u'a3': set([u'69']), u'a2': u'42'}
+mygraph1.write_on_node(u'm1', 
+                       [u's2'],
+                       [u'p1'], 
+                       {u'a3': set([u'69']), u'a2': u'42'}
+)
 ```
 
 ```python
@@ -138,7 +142,7 @@ r_server = redis.Redis("localhost")
 mygraph1 = Directed_graph(r_server, u'mygraph1', logger)
 
 #creating the graph object with a different separator
-mygraph2 = Directed_graph(r_server, u'mygraph2', logger, separator = u'my_custom_sep')
+mygraph2 = Directed_graph(r_server, u'mygraph2', logger, separator = u'mysep')
 
 #creating the graph object with a "root" (improper name, I know)
 mygraph2 = Directed_graph(r_server, u'mygraph2', logger, has_root = True)
