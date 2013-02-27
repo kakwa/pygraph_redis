@@ -32,6 +32,29 @@ First you need a redis database, it's up to you to install it.
 
 The library itself is quite simple:
 
+Cheat Sheet
+-----------
+
+```python
+#              initialization
+#       arg1      |    arg2    |     arg3
+#--------------------------------------------
+# redis connexion | graph_name |    logger
+#    redis obj    |  unicode   |  logger obj 
+
+mygraph1 = Directed_graph(r_server, u'mygraph1', logger)
+```
+
+```python
+
+#    arg1   |     arg2     |     arg3     |                   arg4
+#--------------------------------------------------------------------------------------------------
+# node name |  successors  | predecessors |                 attributs
+#  unicode  | unicode list | unicode list | dictionnary of unicode or set of unicode (key: unicode)
+
+mygraph1.write_on_node(u'm1', [u's2'], [u'p1'], {u'attr3': set([u'16']), u'attr2': u'5150'}
+```
+
 Initialization
 --------------
 
