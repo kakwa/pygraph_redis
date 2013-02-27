@@ -76,7 +76,11 @@ and its successors. A node can store some attributs (strings or sets of strings)
 <span class="c">#  unicode  | unicode list | unicode list |      dictionnary of unicode </span>
 <span class="c">#           |              |              | or set of unicode (key: unicode)</span>
 
-<span class="n">mygraph1</span><span class="o">.</span><span class="n">write_on_node</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">,</span> <span class="p">[</span><span class="s">u's2'</span><span class="p">],</span> <span class="p">[</span><span class="s">u'p1'</span><span class="p">],</span> <span class="p">{</span><span class="s">u'a3'</span><span class="p">:</span> <span class="nb">set</span><span class="p">([</span><span class="s">u'69'</span><span class="p">]),</span> <span class="s">u'a2'</span><span class="p">:</span> <span class="s">u'42'</span><span class="p">}</span>
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">write_on_node</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">,</span> 
+                       <span class="p">[</span><span class="s">u's2'</span><span class="p">],</span>
+                       <span class="p">[</span><span class="s">u'p1'</span><span class="p">],</span> 
+                       <span class="p">{</span><span class="s">u'a3'</span><span class="p">:</span> <span class="nb">set</span><span class="p">([</span><span class="s">u'69'</span><span class="p">]),</span> <span class="s">u'a2'</span><span class="p">:</span> <span class="s">u'42'</span><span class="p">}</span>
+<span class="p">)</span>
 </pre></div>
 
 <div class="highlight"><pre><span class="c">#             delete elements from a node</span>
@@ -154,7 +158,7 @@ and its successors. A node can store some attributs (strings or sets of strings)
 <span class="n">mygraph1</span> <span class="o">=</span> <span class="n">Directed_graph</span><span class="p">(</span><span class="n">r_server</span><span class="p">,</span> <span class="s">u'mygraph1'</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
 
 <span class="c">#creating the graph object with a different separator</span>
-<span class="n">mygraph2</span> <span class="o">=</span> <span class="n">Directed_graph</span><span class="p">(</span><span class="n">r_server</span><span class="p">,</span> <span class="s">u'mygraph2'</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">separator</span> <span class="o">=</span> <span class="s">u'my_custom_sep'</span><span class="p">)</span>
+<span class="n">mygraph2</span> <span class="o">=</span> <span class="n">Directed_graph</span><span class="p">(</span><span class="n">r_server</span><span class="p">,</span> <span class="s">u'mygraph2'</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">separator</span> <span class="o">=</span> <span class="s">u'mysep'</span><span class="p">)</span>
 
 <span class="c">#creating the graph object with a "root" (improper name, I know)</span>
 <span class="n">mygraph2</span> <span class="o">=</span> <span class="n">Directed_graph</span><span class="p">(</span><span class="n">r_server</span><span class="p">,</span> <span class="s">u'mygraph2'</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">has_root</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
