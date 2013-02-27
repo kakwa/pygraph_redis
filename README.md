@@ -95,6 +95,26 @@ mygraph1.get_attributs_list(u'm1')
 
 mygraph1.get_attributs(u'm1', u'a2')
 ```
+
+```python
+# get successors
+#     arg1 
+#--------------
+#  node name 
+#   unicode   
+
+mygraph1.get_successors(u'm1')
+```
+
+```python
+# get predecessors
+#     arg1 
+#--------------
+#  node name 
+#   unicode   
+
+mygraph1.get_predecessors(u'm1')
+```
 Initialization
 --------------
 
