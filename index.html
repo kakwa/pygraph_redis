@@ -1,33 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
 
-    <title>Pygraph redis by kakwa</title>
-  </head>
+  <title>Pygraph redis</title>
+  <meta name="description" content="Simple python library to manipulate directed graphs in redis">
 
-  <body>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
     <header>
-      <div class="inner">
-        <h1>Pygraph redis</h1>
-        <h2>Simple python library to manipulate directed graphs in redis</h2>
-        <a href="https://github.com/kakwa/pygraph_redis" class="button"><small>View project on</small>GitHub</a>
-      </div>
+      <h1 class="title">Pygraph redis</h1>
     </header>
-
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
+    <div id="container">
+      <p class="tagline">Simple python library to manipulate directed graphs in redis</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/kakwa/pygraph_redis/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/kakwa/pygraph_redis/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/kakwa/pygraph_redis" class="code">View Pygraph redis on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
           <h1>pygraph_redis</h1>
 
 <p>Simple python library to manipulate directed graphs in redis</p>
@@ -74,7 +82,7 @@ and its successors. A node can store some attributs (strings or sets of strings)
 <span class="c">#  unicode  | unicode list | unicode list |      dictionnary of unicode </span>
 <span class="c">#           |              |              | or set of unicode (key: unicode)</span>
 
-<span class="n">mygraph1</span><span class="o">.</span><span class="n">write_on_node</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">,</span> <span class="p">[</span><span class="s">u's2'</span><span class="p">],</span> <span class="p">[</span><span class="s">u'p1'</span><span class="p">],</span> <span class="p">{</span><span class="s">u'at3'</span><span class="p">:</span> <span class="nb">set</span><span class="p">([</span><span class="s">u'69'</span><span class="p">]),</span> <span class="s">u'at2'</span><span class="p">:</span> <span class="s">u'42'</span><span class="p">}</span>
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">write_on_node</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">,</span> <span class="p">[</span><span class="s">u's2'</span><span class="p">],</span> <span class="p">[</span><span class="s">u'p1'</span><span class="p">],</span> <span class="p">{</span><span class="s">u'a3'</span><span class="p">:</span> <span class="nb">set</span><span class="p">([</span><span class="s">u'69'</span><span class="p">]),</span> <span class="s">u'a2'</span><span class="p">:</span> <span class="s">u'42'</span><span class="p">}</span>
 </pre></div>
 
 <div class="highlight"><pre><span class="c">#             delete elements from a node</span>
@@ -93,6 +101,42 @@ and its successors. A node can store some attributs (strings or sets of strings)
 <span class="c">#   unicode   </span>
 
 <span class="n">mygraph1</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c"># get attributs list</span>
+<span class="c">#     arg1 </span>
+<span class="c">#--------------</span>
+<span class="c">#  node name </span>
+<span class="c">#   unicode   </span>
+
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">get_attributs_list</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c"># get an attribut</span>
+<span class="c">#     arg1     |     arg2</span>
+<span class="c">#--------------|--------------</span>
+<span class="c">#  node name   | attribut name</span>
+<span class="c">#   unicode    |    unicode</span>
+
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">get_attributs</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">,</span> <span class="s">u'a2'</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c"># get successors</span>
+<span class="c">#     arg1 </span>
+<span class="c">#--------------</span>
+<span class="c">#  node name </span>
+<span class="c">#   unicode   </span>
+
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">get_successors</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c"># get predecessors</span>
+<span class="c">#     arg1 </span>
+<span class="c">#--------------</span>
+<span class="c">#  node name </span>
+<span class="c">#   unicode   </span>
+
+<span class="n">mygraph1</span><span class="o">.</span><span class="n">get_predecessors</span><span class="p">(</span><span class="s">u'm1'</span><span class="p">)</span>
 </pre></div>
 
 <h2>Initialization</h2>
@@ -228,25 +272,26 @@ it must not be included in any node name or node attribut name (possible redis k
 <h2>About the logs</h2>
 
 <p>This library provides a lot of logs, most of them are debug, except possible redis key collision which is warning.</p>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/kakwa/pygraph_redis/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/kakwa/pygraph_redis/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/kakwa/pygraph_redis"></a> is maintained by <a href="https://github.com/kakwa">kakwa</a>.</p>
-
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
+        </article>
       </div>
     </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/kakwa" class="avatar"><img src="https://secure.gravatar.com/avatar/bf9868bd766533e965b2eb1ed2d4ef76?s=30&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" width="48" height="48"/></a> <a href="https://github.com/kakwa">kakwa</a> maintains <a href="https://github.com/kakwa/pygraph_redis">Pygraph redis</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br/>theme by <a href="http://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/kakwa/pygraph_redis/tarball/master" class="tar">tar</a><a href="https://github.com/kakwa/pygraph_redis/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
 
   
-  </body>
+</body>
 </html>
