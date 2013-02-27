@@ -53,7 +53,7 @@ mygraph1 = Directed_graph(r_server, u'mygraph1', logger)
 #  unicode  | unicode list | unicode list |      dictionnary of unicode 
 #           |              |              | or set of unicode (key: unicode)
 
-mygraph1.write_on_node(u'm1', [u's2'], [u'p1'], {u'at3': set([u'69']), u'at2': u'42'}
+mygraph1.write_on_node(u'm1', [u's2'], [u'p1'], {u'a3': set([u'69']), u'a2': u'42'}
 ```
 
 ```python
@@ -76,6 +76,25 @@ mygraph1.write_off_node(u'm1', [u's2'], [u'p1'], [u'attr3', u'attr2']
 mygraph1.remove_node(u'm1')
 ```
 
+```python
+# get attributs list
+#     arg1 
+#--------------
+#  node name 
+#   unicode   
+
+mygraph1.get_attributs_list(u'm1')
+```
+
+```python
+# get an attribut
+#     arg1     |     arg2
+#--------------|--------------
+#  node name   | attribut name
+#   unicode    |    unicode
+
+mygraph1.get_attributs(u'm1', u'a2')
+```
 Initialization
 --------------
 
