@@ -53,7 +53,7 @@ mygraph1 = Directed_graph(r_server, u'mygraph1', logger)
 #  unicode  | unicode list | unicode list |      dictionnary of unicode 
 #           |              |              | or set of unicode (key: unicode)
 
-mygraph1.write_on_node(u'm1', [u's2'], [u'p1'], {u'attr3': set([u'16']), u'attr2': u'5150'}
+mygraph1.write_on_node(u'm1', [u's2'], [u'p1'], {u'at3': set([u'69']), u'at2': u'42'}
 ```
 
 ```python
