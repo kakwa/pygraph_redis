@@ -46,11 +46,12 @@ mygraph1 = Directed_graph(r_server, u'mygraph1', logger)
 ```
 
 ```python
-#                          create or add elements to a node
-#    arg1   |     arg2     |     arg3     |                   arg4
-#--------------------------------------------------------------------------------------------------
-# node name |  successors  | predecessors |                 attributs
-#  unicode  | unicode list | unicode list | dictionnary of unicode or set of unicode (key: unicode)
+#                    create or add elements to a node
+#    arg1   |     arg2     |     arg3     |             arg4
+#---------------------------------------------------------------------------
+# node name |  successors  | predecessors |           attributs
+#  unicode  | unicode list | unicode list |      dictionnary of unicode 
+#           |              |              | or set of unicode (key: unicode)
 
 mygraph1.write_on_node(u'm1', [u's2'], [u'p1'], {u'attr3': set([u'16']), u'attr2': u'5150'}
 ```
@@ -63,6 +64,16 @@ mygraph1.write_on_node(u'm1', [u's2'], [u'p1'], {u'attr3': set([u'16']), u'attr2
 #  unicode  | unicode list | unicode list | list of unicode 
 
 mygraph1.write_off_node(u'm1', [u's2'], [u'p1'], [u'attr3', u'attr2']
+```
+
+```python
+# delete a node
+#     arg1 
+#--------------
+#  node name 
+#   unicode   
+
+mygraph1.remove_node(u'm1')
 ```
 
 Initialization
