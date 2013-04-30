@@ -2,6 +2,7 @@
 
 import redis
 import re
+import time
 
 class Directed_graph:
     """this class implement directed graph inside redis"""
@@ -21,14 +22,14 @@ class Directed_graph:
 #   it must not be included in any node name or node attribut name.
 
     def __init__(self, connexion, graph, logger, 
-            separator = u':@@:', has_root = False
-            ):
+                      separator = u'@@@', has_root = False
+                ):
         """initialize a Redisgraph instance
         connexion: a redis connexion
         graph: a graph name (string)
         logger: a logger 
         separator: fields separator must not be in an node name 
-            (default :@@:) (string)
+            (default @\U0001F4A9@) (string)
         has_root: flag to set if node with no predecessors must be linked 
             to a factice "root" node (default False) (boolean)
         """
@@ -56,7 +57,7 @@ class Directed_graph:
         attributs: attributes of the node (dictionnary of string)
         """
         self._ensure_not_separator(node)
-
+    
         for successor in successors:
             #for each successor, adding "node"
             #as a predecessor of "successor"
@@ -65,16 +66,16 @@ class Directed_graph:
             #as a successor of "node"
             self._add_successor(node, successor)
             #handleling node with no predecessor
-            self.handle_no_predecessor(successor)
+            #self.handle_no_predecessor(successor)
 
             self.logger.debug(u"ensure node %(node)s is predecessor"\
-                    " of %(successor)s" % {
-                        u'successor': successor,
-                        u'node':node
-                        }
-                    )
-
-            #if node has no predecessors, adding root as predecessor
+                " of %(successor)s" % {
+                u'successor': successor,
+                u'node':node
+                }
+                )
+        
+        #if node has no predecessors, adding root as predecessor
         for predecessor in predecessors:
             #for each predecessor, adding "node" as
             #a successor of "predecessor"
@@ -86,15 +87,15 @@ class Directed_graph:
             self.handle_no_predecessor(predecessor)
 
             self.logger.debug(u"ensure node %(node)s is successor"\
-                    " of %(predecessor)s" % {
-                        u'predecessor': predecessor,
-                        u'node': node
-                        }
-                    )
+                " of %(predecessor)s" % {
+                u'predecessor': predecessor,
+                u'node': node
+                }
+                )
 
-            #handleling node with no predecessor
+        #handleling node with no predecessor
         self.handle_no_predecessor(node)
-
+        
         #adding the attributs
         for attribut_name in attributs:
             #attribut_name is a key of the dictionary (must be unicode string)
@@ -102,13 +103,13 @@ class Directed_graph:
             value = attributs[attribut_name]
 
             self.logger.debug(u"adding attibut %(attribut_name)s"\
-                    " with value %(value)s on"\
+                " with value %(value)s on"\
                     " node %(node)s" % {
-                        u'attribut_name': attribut_name,
-                        u'value': value, 
-                        u'node':node
-                        }
-                    )
+                    u'attribut_name': attribut_name,
+                    u'value': value, 
+                    u'node':node
+                    }
+            )
             #ensure that attribut_name doesn't contain the separator
             #(redis key collisition)
             self._ensure_not_separator(attribut_name)
@@ -130,13 +131,13 @@ class Directed_graph:
             self.handle_no_predecessor(successor)
 
             self.logger.debug(u"ensure node %(node)s is no longer"\
-                    " predecessor of %(successor)s" % {
-                        u'successor': successor,
-                        u'node': node
-                        }
-                    )
+                " predecessor of %(successor)s" % {
+                u'successor': successor,
+                u'node': node
+                }
+                )
 
-            #removing the predecessors
+        #removing the predecessors
         for predecessor in predecessors:
             #reverse of write_on_node
             self._remove_predecessor(node, predecessor)
@@ -144,26 +145,26 @@ class Directed_graph:
             self.handle_no_predecessor(predecessor)
 
             self.logger.debug(u"ensure node %(node)s is no longer"\
-                    " successor of %(predecessor)s" % {
-                        u'predecessor': predecessor,
-                        u'node': node
-                        }
-                    )
+                " successor of %(predecessor)s" % {
+                u'predecessor': predecessor,
+                u'node': node
+                }
+            )
 
-            #handleling the orphans
+        #handleling the orphans
         self.handle_no_predecessor(node)
-
+        
         #removing the attributs
         for attribut_name in attributs:
             #reverse of write_on_node
             self._remove_attribut(node, attribut_name)
             self.logger.debug(u"remove attibut %(attribut_name)s on"\
-                    " node %(node)s" % {
-                        u'attribut_name':attribut_name,
-                        u'node': node
-                        }
-                    )
-
+                " node %(node)s" % {
+                u'attribut_name':attribut_name,
+                u'node': node
+                }
+            )
+    
     def remove_node(self, node):
         """completly remove a given node from the graph
         node: the name of the node (string)
@@ -175,34 +176,34 @@ class Directed_graph:
             self.handle_no_predecessor(successor)
 
             self.logger.debug(u"ensure node %(node)s is no longer"\
-                    " predecessor of %(successor)s" % {
-                        u'successor': successor, 
-                        u'node': node
-                        }
-                    )
+                " predecessor of %(successor)s" % {
+                u'successor': successor, 
+                u'node': node
+                }
+            )
 
         for predecessor in self.get_predecessors(node):
             #here, only handle the predecessor
-        #(node will be removed completely later)
-        self._remove_successor(predecessor, node)
-        self.handle_no_predecessor(predecessor)
+            #(node will be removed completely later)
+            self._remove_successor(predecessor, node)
+            self.handle_no_predecessor(predecessor)
 
-        self.logger.debug(u"ensure node %(node)s is no longer"\
+            self.logger.debug(u"ensure node %(node)s is no longer"\
                 " successor of %(predecessor)s" % {
-                    u'predecessor': predecessor,
-                    u'node': node
-                    }
-                )
+                u'predecessor': predecessor,
+                u'node': node
+                }
+            )
 
         for attribut_name in self.get_attributs_list(node):
             #remove each attribut of the node
-        self._remove_attribut(node, attribut_name)
+            self._remove_attribut(node, attribut_name)
 
         self.logger.debug(u"remove node %(node)s from database" % {
             u'node': node
             }
-            )
-
+        )
+ 
         #remove all the other keys of the node
         redis_key = self._gen_key(node, [u'attribut_list', ])
         self.connexion.delete(redis_key)
@@ -235,7 +236,7 @@ class Directed_graph:
         self.logger.debug(u"get attributs list of node %(node)s" % {
             u'node': node
             }
-            )
+        )
         redis_key = self._gen_key(node, [u'attributs_list', ])
         return self.connexion.smembers(redis_key)
 
@@ -247,11 +248,11 @@ class Directed_graph:
                     or a string
         """
         self.logger.debug(u"get attribut %(attribut_name)s"\
-                " of node %(node)s" % {
-                    u'attribut_name': attribut_name,
-                    u'node': node
-                    }
-                )
+            " of node %(node)s" % {
+            u'attribut_name': attribut_name,
+            u'node': node
+            }
+        )
 
         #get the attribut value (different type handling)
         redis_key = self._gen_key(node, [u'attribut', u'attribut_name' ])
@@ -263,8 +264,8 @@ class Directed_graph:
             return self.connexion.smembers(redis_key)
         else:
             return None
-
-
+ 
+            
     def _gen_key(self, node, type_list):
         """generate the key
         node: the name of the node (string)
@@ -274,10 +275,10 @@ class Directed_graph:
             (string)
         """
         key = u"%(graph)s%(separator)s%(node)s" % {
-                u'node' : node,
-                u'graph' : self.graph,
-                u'separator' :  self.separator
-                }
+            u'node' : node,
+            u'graph' : self.graph,
+            u'separator' :  self.separator
+            }
         for t in type_list:
             key = key + self.separator + t
         return key   
@@ -305,15 +306,15 @@ class Directed_graph:
                 self.connexion.sadd(redis_key, sub_value) 
         else:
             self.logger.debug(u"unhandle type %(type)"\
-                    " for attribut %(attribut_name)s on"\
+                " for attribut %(attribut_name)s on"\
                     " node %(node)s" % {
-                        u'attribut_name': attribut_name,
-                        u'type': str(type(value)),
-                        u'node': node
-                        }
-                    )
+                    u'attribut_name': attribut_name,
+                    u'type': str(type(value)),
+                    u'node': node
+                    }
+            )
 
-            redis_key = self._gen_key(node, [u'attributs_list', ])
+        redis_key = self._gen_key(node, [u'attributs_list', ])
         self.connexion.sadd(redis_key, attribut_name)
 
     def _remove_attribut(self, node, attribut_name):
@@ -329,12 +330,12 @@ class Directed_graph:
         test = re.search(self.separator, name,0)
         if not test == None:
             self.logger.warning(u"attribut or node %(name)s already contains"\
-                    " key separator %(sep)s, this could lead to"\
-                    " strange behaviours (keys collision)" % {
-                        u'name' : name,
-                        u'sep' : self.separator
-                        }
-                    )         
+                " key separator %(sep)s, this could lead to"\
+                " strange behaviours (keys collision)" % {
+                u'name' : name,
+                u'sep' : self.separator
+                }
+            )         
             return 1
         else:
             return 0
@@ -343,12 +344,12 @@ class Directed_graph:
         redis_key = self._gen_key(node, [relative_type, ])
 
         self.logger.debug(u"get %(relative_type)s of node %(node)s, "\
-                "requested key: %(key)s" % {
-                    u'relative_type': relative_type,
-                    u'node' : node,
-                    u'key' : redis_key
-                    }
-                )
+            "requested key: %(key)s" % {
+            u'relative_type': relative_type,
+            u'node' : node,
+            u'key' : redis_key
+            }
+        )
 
         return self.connexion.smembers(redis_key)
 
@@ -375,13 +376,13 @@ class Directed_graph:
         redis_key = self._gen_key(node, [relative_type, ])
 
         self.connexion.srem(redis_key
-                , u"%(relative)s" % {
-                    u'relative' : relative
-                    }
-                )
+            , u"%(relative)s" % {
+                u'relative' : relative
+                }
+        )
 
-        def _add_successor(self, node, relative):
-            """add a successor to a node
+    def _add_successor(self, node, relative):
+        """add a successor to a node
         node: name of the node (string)
         relative: name of the successor (string)
         """
@@ -403,12 +404,12 @@ class Directed_graph:
         redis_key = self._gen_key(node, [relative_type, ])
 
         self.connexion.sadd(redis_key
-                , u"%(relative)s" % {
-                    u'relative' : relative
-                    })
+        , u"%(relative)s" % {
+        u'relative' : relative
+        })
 
-                def handle_no_predecessor(self, node):
-                    """handle root, if node has no predecessor, graph root becomes
+    def handle_no_predecessor(self, node):
+        """handle root, if node has no predecessor, graph root becomes
              its predecessor
         if node as graph root and another node, remove graph root 
             as predecessor
@@ -419,8 +420,8 @@ class Directed_graph:
 
         if node == self.root:
             return
-        redis_key = self._gen_key(node, [u'predecessor', ])
 
+        redis_key = self._gen_key(node, [u'predecessor', ])
         rootismember = self.connexion.sismember(redis_key, self.root)
         card = self.connexion.scard(redis_key)
         if card == 0:
@@ -430,5 +431,5 @@ class Directed_graph:
         elif card > 1 and rootismember == 1:
             self._remove_predecessor(node, self.root)
             self._remove_successor(self.root, node)
-
+            
 
