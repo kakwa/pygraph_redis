@@ -1,4 +1,4 @@
-pygraph\_redis  [![Build Status](https://api.travis-ci.org/kakwa/pygraph_redis.png)](https://api.travis-ci.org/kakwa/pygraph_redis)
+pygraph\_redis  [![Build Status](https://api.travis-ci.org/kakwa/pygraph_redis.png)](https://travis-ci.org/kakwa/pygraph_redis)
 ==============
 
 Simple python library to manipulate directed graphs in redis
