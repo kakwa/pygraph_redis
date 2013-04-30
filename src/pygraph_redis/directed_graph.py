@@ -421,7 +421,7 @@ class Directed_graph:
         if node == self.root:
             return
 
-        redis_key = self._gen_key(node, [u'predecessor', ])
+        redis_key = self._gen_key(node, [u'predecessors', ])
         rootismember = self.connexion.sismember(redis_key, self.root)
         card = self.connexion.scard(redis_key)
         if card == 0:
