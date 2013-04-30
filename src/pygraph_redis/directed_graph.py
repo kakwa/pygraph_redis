@@ -303,7 +303,7 @@ class Directed_graph:
             for sub_value in value:
             	#adding the attribut value (it's a set -> loop)
                 self.connexion.sadd(redis_key, sub_value) 
-    else:
+        else:
             self.logger.debug(u"unhandle type %(type)"\
                 " for attribut %(attribut_name)s on"\
                     " node %(node)s" % {

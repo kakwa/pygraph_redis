@@ -17,5 +17,5 @@ setup(name='pygraph_redis',
           ],
       packages = ['pygraph_redis',],
       package_dir = {'': 'src'},
-      namespace_packages = ['pygraph_redis', ],
+#      namespace_packages = ['pygraph_redis', ],
      )
