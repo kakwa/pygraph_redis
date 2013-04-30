@@ -14,9 +14,9 @@ import logging
 try: 
     sys.argv[1]
 except IndexError:
-    node_number = 1000
-    print "using the default number of nodes: 1000"
-    print "you can change it by passing an arg to the script"
+    node_number = 400
+    print("using the default number of nodes: 400")
+    print("you can change it by passing an arg to the script")
 else:
     node_number = int(sys.argv[1])
 
@@ -35,11 +35,11 @@ OKGREEN = '\033[92m'
 WARNING = '\033[93m'
 
 #some fixed attributs
-fix_attributes = {u'jack': set([u'1',u'2']), u'spare': u'youpi'}
+fix_attributes = {'jack': set(['1','2']), 'spare': 'youpi'}
 
 #function transforming <number> -> node_<number>
 def create_name_from_number(integer):
-    return u'node_' + str(integer)
+    return 'node_' + str(integer)
 
 #function generating the graph in python structures
 def generate_tree(node_number):
@@ -64,7 +64,7 @@ def generate_tree(node_number):
         successors.append(successors_node)
         predecessors.append(predecessors_node)
 
-print OKBLUE + "creating " + str(node_number)  + " nodes"
+print(OKBLUE + "creating " + str(node_number)  + " nodes")
 #calling the generation function
 generate_tree(node_number)
 
@@ -72,12 +72,12 @@ generate_tree(node_number)
 r_server = redis.Redis("localhost")
 
 #creating a basic logger
-logging.basicConfig(format = u'%(message)s')
-logger = logging.getLogger(u'redis')
+logging.basicConfig(format = '%(message)s')
+logger = logging.getLogger('redis')
 logger.parent.setLevel(logging.CRITICAL)
 
 #creating the graph object
-graph = Directed_graph(r_server, u'uniq', logger)
+graph = Directed_graph(r_server, 'uniq', logger)
 
 #we define two process to write the nodes
 def process_one():
@@ -91,7 +91,7 @@ def process_two():
 #we get the date before the insertion
 t1 = datetime.now()
 #create and launch the two processes
-print OKBLUE + "starting the insertion"
+print(OKBLUE + "starting the insertion")
 p1 = Process(target=process_one)
 p2 = Process(target=process_two)
 p1.start()
@@ -104,9 +104,9 @@ p2.join()
 t2 = datetime.now()
 c = t2 - t1
 
-#we print the number of node inserted per second
-print  OKBLUE + "insertion completed"
-print  OKGREEN + "####\nadding " + str(node_number / c.total_seconds()) + " nodes/second\n####"
+#we print(the number of node inserted per second)
+print( OKBLUE + "insertion completed")
+print( OKGREEN + "####\nadding " + str(node_number / c.total_seconds()) + " nodes/second\n####")
 
 #we do exactly the same to delete the inserted nodes
 def process_one():
@@ -118,7 +118,7 @@ def process_two():
         graph.remove_node(nodes[i])
 
 t1 = datetime.now()
-print OKBLUE + "starting deleting the nodes"
+print(OKBLUE + "starting deleting the nodes")
 p1 = Process(target=process_one)
 p2 = Process(target=process_two)
 p1.start()
@@ -128,5 +128,5 @@ p2.join()
 
 t2 = datetime.now()
 c = t2 - t1
-print OKBLUE + "delete completed"
-print OKGREEN + "####\nremoving " + str(node_number / c.total_seconds()) + " nodes/second\n####"
+print(OKBLUE + "delete completed")
+print(OKGREEN + "####\nremoving " + str(node_number / c.total_seconds()) + " nodes/second\n####")
