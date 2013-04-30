@@ -164,8 +164,8 @@ class Directed_graph:
                         }
                     )
 
-            def remove_node(self, node):
-                """completly remove a given node from the graph
+    def remove_node(self, node):
+        """completly remove a given node from the graph
         node: the name of the node (string)
         """
         for successor in self.get_successors(node):
@@ -181,22 +181,22 @@ class Directed_graph:
                         }
                     )
 
-            for predecessor in self.get_predecessors(node):
-                #here, only handle the predecessor
-            #(node will be removed completely later)
-            self._remove_successor(predecessor, node)
-            self.handle_no_predecessor(predecessor)
+        for predecessor in self.get_predecessors(node):
+            #here, only handle the predecessor
+        #(node will be removed completely later)
+        self._remove_successor(predecessor, node)
+        self.handle_no_predecessor(predecessor)
 
-            self.logger.debug(u"ensure node %(node)s is no longer"\
-                    " successor of %(predecessor)s" % {
-                        u'predecessor': predecessor,
-                        u'node': node
-                        }
-                    )
+        self.logger.debug(u"ensure node %(node)s is no longer"\
+                " successor of %(predecessor)s" % {
+                    u'predecessor': predecessor,
+                    u'node': node
+                    }
+                )
 
-            for attribut_name in self.get_attributs_list(node):
-                #remove each attribut of the node
-            self._remove_attribut(node, attribut_name)
+        for attribut_name in self.get_attributs_list(node):
+            #remove each attribut of the node
+        self._remove_attribut(node, attribut_name)
 
         self.logger.debug(u"remove node %(node)s from database" % {
             u'node': node
