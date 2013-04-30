@@ -8,3 +8,4 @@ python:
 install: 
   - pip install -e . --use-mirrors
 # command to run tests
+script: "python tests/test_1.py"
