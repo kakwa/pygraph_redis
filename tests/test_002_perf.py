@@ -1,4 +1,4 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 
 from datetime import datetime
 import random
@@ -24,6 +24,9 @@ else:
 max_number_successors = 10
 #max number of predecessors
 max_number_predecessors = 10
+
+#performance target (number of insertions per seconde)
+target = 200
 
 #empty lists (initialization)
 nodes = []
@@ -106,7 +109,14 @@ c = t2 - t1
 
 #we print(the number of node inserted per second)
 print( OKBLUE + "insertion completed")
-print( OKGREEN + "####\nadding " + str(node_number / c.total_seconds()) + " nodes/second\n####")
+perf = node_number / c.total_seconds()
+
+exit_code = 0
+if perf > target:
+    print( OKGREEN + "####\nadding " + str(perf) + " nodes/second\n####")
+else:
+    print( WARNING + "####\nadding " + str(perf) + " nodes/second\n####")
+    exit_code = 1
 
 #we do exactly the same to delete the inserted nodes
 def process_one():
@@ -129,4 +139,13 @@ p2.join()
 t2 = datetime.now()
 c = t2 - t1
 print(OKBLUE + "delete completed")
-print(OKGREEN + "####\nremoving " + str(node_number / c.total_seconds()) + " nodes/second\n####")
+
+perf = node_number / c.total_seconds()
+
+if perf > target:
+    print( OKGREEN + "####\nremoving " + str(perf) + " nodes/second\n####")
+else:
+    print( WARNING + "####\nremoving " + str(perf) + " nodes/second\n####")
+    exit_code = 1
+
+exit(exit_code)

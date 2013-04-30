@@ -9,50 +9,50 @@ r_server = redis.Redis("localhost")
 
 #creating a basic logger
 import logging
-logging.basicConfig(format = u'%(message)s')
-logger = logging.getLogger(u'redis')
+logging.basicConfig(format = '%(message)s')
+logger = logging.getLogger('redis')
 logger.parent.setLevel(logging.DEBUG)
 
 #creating the graph object
-graph = Directed_graph(r_server, u'uniq', logger)
+graph = Directed_graph(r_server, 'uniq', logger)
 
 #adding some nodes
-graph.write_on_node(u'm1', [u'c1', u'c2', u'c3', u'c4'], [u'p1', u'p2', u'p3'],{u'jack': set([u'1',u'2']), u'spare': u'youpi'})
-graph.write_on_node(u"m2", [u"c1", u"c3", u"c4"], [u"p2", u"p3"],{u'sape': u'4139', u'guido': u'4127'})
-graph.write_on_node(u"m3", [u"c1", u"c3", u"c4"], [u"p2", u"p3"],{})
-graph.write_on_node(u"P1", [u"p2", u"p3"],[],{})
+graph.write_on_node('m1', ['c1', 'c2', 'c3', 'c4'], ['p1', 'p2', 'p3'],{'jack': set(['1','2']), 'spare': 'youpi'})
+graph.write_on_node("m2", ["c1", "c3", "c4"], ["p2", "p3"],{'sape': '4139', 'guido': '4127'})
+graph.write_on_node("m3", ["c1", "c3", "c4"], ["p2", "p3"],{})
+graph.write_on_node("P1", ["p2", "p3"],[],{})
 
 #printing some predecessors or successors
-print graph.get_predecessors(u"m1")
-print graph.get_successors(u"m1")
-print graph.get_predecessors(u"p2")
-print graph.get_successors(u"p2")
-print graph.get_successors(u"c3")
-print graph.get_successors(graph.root)
-print graph.get_predecessors(u"c3")
+print(graph.get_predecessors("m1"))
+print(graph.get_successors("m1"))
+print(graph.get_predecessors("p2"))
+print(graph.get_successors("p2"))
+print(graph.get_successors("c3"))
+print(graph.get_successors(graph.root))
+print(graph.get_predecessors("c3"))
 
 #getting an attributs list
-print graph.get_attributs_list(u'm2')
+print(graph.get_attributs_list('m2'))
 #getting some attribut
-print graph.get_attribut(u'm2', u'guido')
-print graph.get_attribut(u'm1', u'jack')
+print(graph.get_attribut('m2', 'guido'))
+print(graph.get_attribut('m1', 'jack'))
 
 #example of write off (suppression of some elements of a node, like predecessors, successors or attributs)
 #getting the elements before
-print graph.get_attributs_list(u'm2')
-print graph.get_predecessors(u"m2")
-print graph.get_successors("m2")
+print(graph.get_attributs_list('m2'))
+print(graph.get_predecessors("m2"))
+print(graph.get_successors("m2"))
 
 #removing the elements
-graph.write_off_node(u"m2", [u"c1"], [u"p2", u"p3"],[u'sape'])
+graph.write_off_node("m2", ["c1"], ["p2", "p3"],['sape'])
 
 #getting the elements after
-print graph.get_attributs_list(u'm2')
-print graph.get_predecessors(u"m2")
-print graph.get_successors(u"m2")
+print(graph.get_attributs_list('m2'))
+print(graph.get_predecessors("m2"))
+print(graph.get_successors("m2"))
 
 #removing a node
-graph.remove_node(u'm2')
-print graph.get_predecessors(u"m2")
-print graph.get_successors(u"m2")
-print graph.get_successors(graph.root)
+graph.remove_node('m2')
+print(graph.get_predecessors("m2"))
+print(graph.get_successors("m2"))
+print(graph.get_successors(graph.root))
