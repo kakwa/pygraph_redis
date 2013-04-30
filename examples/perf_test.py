@@ -11,10 +11,14 @@ import redis
 
 import logging
 
-if sys.argv[1]:
-    node_number = int(sys.argv[1])
+try: 
+    sys.argv[1]
+except IndexError:
+    node_number = 1000
+    print "using the default number of nodes: 1000"
+    print "you can change it by passing an arg to the script"
 else:
-    node_number = 5000
+    node_number = int(sys.argv[1])
 
 #max number of successors
 max_number_successors = 10
