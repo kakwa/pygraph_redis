@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 #importing directed_graph
 from pygraph_redis.directed_graph import Directed_graph
@@ -65,7 +66,7 @@ def main():
             print(GREEN + node + " " + nature +": Ok")
 
 
-    attributes = {'jack': set(['1','2']), 'spare': 'youpi'}
+    attributes = {'☭jack': set(['1','2']), 'spare☭': '☭youpi'}
 
     graph.write_on_node(node3, node3_successors, node3_predecessors, attributes)
     graph.write_on_node(node4, node4_successors, node4_predecessors, attributes)
