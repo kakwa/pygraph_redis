@@ -66,7 +66,7 @@ class Directed_graph:
             #as a successor of "node"
             self._add_successor(node, successor)
             #handleling node with no predecessor
-            #self.handle_no_predecessor(successor)
+            self.handle_no_predecessor(successor)
 
             self.logger.debug("ensure node %(node)s is predecessor"\
                 " of %(successor)s" % {
