@@ -67,82 +67,81 @@ def main():
 
 
     attributes = {'☭jack': set(['1','2']), 'spare☭': '☭youpi'}
-
+ #
     graph.write_on_node(node3, node3_successors, node3_predecessors, attributes)
     graph.write_on_node(node4, node4_successors, node4_predecessors, attributes)
     graph.write_on_node(node1, node1_successors, node1_predecessors, attributes)
     graph.write_on_node(node2, node2_successors, node2_predecessors, attributes)
     graph.write_on_node(node5, node5_successors, node5_predecessors, attributes)
-
+ 
     #printing some predecessors or successors
     name = graph.root
     got = graph.get_successors(name)
-    #print(type(got.pop()))
     expected = set([b'level_1_2', b'level_1_1']) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
-
+ 
     got = graph.get_predecessors(name)
     expected = set([]) 
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
-
+ 
     name = node1
     got = graph.get_successors(name)
     expected = set([b'level_2_1', b'level_2_2'])
     if print_test(got, expected, name, "successors") == 1:
         return 1
-
+ 
     got = graph.get_predecessors(name)
     expected = set([b'RO_@@@_OT'])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
-
+ 
     name = node2
     got = graph.get_successors(name)
     expected = set([b'level_2_1', b'level_2_2'])
     if print_test(got, expected, name, "successors") == 1:
         return 1
-
+ 
     got = graph.get_predecessors(name)
     expected = set([b'RO_@@@_OT'])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
-
+ 
     name = node3
     got = graph.get_successors(name)
     expected = set([b'level_3_1']) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
-
+ 
     got = graph.get_predecessors(name)
     expected = set([b'level_1_2', b'level_1_1'])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
-
+ 
     name = node4
     got = graph.get_successors(name)
     expected = set([b'level_3_1']) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
-
+ 
     got = graph.get_predecessors(name)
     expected = set([b'level_1_2', b'level_1_1'])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
-
+ 
     name = node5
     got = graph.get_successors(name)
     expected = set([])
     if print_test(got, expected, name, "successors") == 1:
         return 1
-
+ 
     got = graph.get_predecessors(name)
     expected = set([b'level_2_1', b'level_2_2'])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
-
-
+ 
+ 
     clean()
     return 0
 
