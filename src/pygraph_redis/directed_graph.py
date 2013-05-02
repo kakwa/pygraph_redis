@@ -315,6 +315,11 @@ class Directed_graph:
         return self._encode_set(self.connexion.smembers(redis_key))
 
     def _encode_set(self, set_in):
+        """convert a set of bytes into a set of utf8
+           (redis gives us bytes, this lib output utf8)
+           set_in: set of bytes
+           return: same set, but utf-8
+        """
         res = set([])
         for i in set_in:
             res.add(i.decode('utf-8'))
