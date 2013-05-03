@@ -13,7 +13,7 @@ setup(name='pygraph_redis',
       url='https://github.com/kakwa/pygraph_redis',
       install_requires=[
           "setuptools",
-          "redis>=2.7",
+          "redis",
           ],
       packages = ['pygraph_redis',],
       package_dir = {'': 'src'},

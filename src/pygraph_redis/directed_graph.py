@@ -43,6 +43,9 @@ class Directed_graph:
                                                     #   (ultimate predecessor)
         self.transactions = {} #dictionnary of transactions
 
+        self.legacy_mode = False #small flag for a legacy mode 
+        #(support of lua scripting in both python-redis and redis-server
+
         #a small lua script to handle the has_root option
         # first arg is the node name, second arg is the node predecessors key
         self.lua_handle_no_predecessor = ("""
@@ -61,33 +64,47 @@ class Directed_graph:
             'ROOT' : self.root
             }
         )
-        #we register the script
-        self.handle_no_predecessor_script = self.connexion.register_script(
+
+        #we try to register the script
+        try:
+            self.handle_no_predecessor_script = self.connexion.register_script(
                 self.lua_handle_no_predecessor)
 
+        except redis.exceptions.ResponseError:
+            #server is to old for lua scripting
+            self.legacy_mode = True
+            self.logger.info('redis server < 2.6.0, using legacy mode, no atomicity')
+
+        except AttributeError:
+            #redis-pyton is to old for lua scripting
+            self.legacy_mode = True
+            self.logger.info('redis-python < 2.7.0, using legacy mode, no atomicity')
 
 
-        #a small lua script to remove all the attributes of a given node
-        # first arg is the node name, second arg is the node attributs key
-        self.lua_remove_all_attributs = ("""
-        local rootismember = redis.call('SISMEMBER', ARGV[2], '%(ROOT)s')
-        local card = redis.call('SCARD', ARGV[2])
-        if card == 0 
-            then redis.call('SADD', ARGV[2], '%(ROOT)s')
-                 redis.call('SADD', '%(ROOTSUCC)s', ARGV[1])
-        end
-        if card > 1 and rootismember == 1
-        then redis.call('SREM', ARGV[2], '%(ROOT)s')
-             redis.call('SREM', '%(ROOTSUCC)s', ARGV[1])
-        end
-        """ % {
-            'ROOTSUCC' : self._gen_key(self.root, ['successors', ]),
-            'ROOT' : self.root
-            }
-        )
-        #we register the script
-        self.remove_all_attributes = self.connexion.register_script(
-                self.lua_remove_all_attributs)
+        #if we are not in legacy mode, we try to register other lua scripts
+        if not self.legacy_mode:
+
+            #a small lua script to remove all the attributes of a given node
+            # first arg is the node name, second arg is the node attributs key
+            self.lua_remove_all_attributs = ("""
+            local rootismember = redis.call('SISMEMBER', ARGV[2], '%(ROOT)s')
+            local card = redis.call('SCARD', ARGV[2])
+            if card == 0 
+                then redis.call('SADD', ARGV[2], '%(ROOT)s')
+                     redis.call('SADD', '%(ROOTSUCC)s', ARGV[1])
+            end
+            if card > 1 and rootismember == 1
+            then redis.call('SREM', ARGV[2], '%(ROOT)s')
+                 redis.call('SREM', '%(ROOTSUCC)s', ARGV[1])
+            end
+            """ % {
+                'ROOTSUCC' : self._gen_key(self.root, ['successors', ]),
+                'ROOT' : self.root
+                }
+            )
+            #we register the script
+            self.remove_all_attributes = self.connexion.register_script(
+                    self.lua_remove_all_attributs)
 
 
 
@@ -168,8 +185,16 @@ class Directed_graph:
             self._add_attribut(node, attribut_name, value, trans_id)
         #we execute the pipe
         self.transactions[trans_id].execute()
-        del self.transactions[trans_id]
 
+        #if we use older versions of redis server or redis-python, no lua script
+        if self.legacy_mode:
+            for successor in successors:
+                self.handle_no_predecessor_legacy(successor, trans_id)
+            for predecessor in predecessors:
+                self.handle_no_predecessor_legacy(predecessor, trans_id)
+            self.handle_no_predecessor_legacy(node, trans_id)
+            self.transactions[trans_id].execute()
+        del self.transactions[trans_id]
 
     def write_off_node(self, node, successors, predecessors, attributs):
         """remove given successors, predecessors, attributs to a given node
@@ -225,7 +250,19 @@ class Directed_graph:
             )
         #we execute the pipe
         self.transactions[trans_id].execute()
+
+        #if we use older versions of redis server or redis-python, no lua script
+        if self.legacy_mode:
+            for successor in successors:
+                self.handle_no_predecessor_legacy(successor, trans_id)
+            for predecessor in predecessors:
+                self.handle_no_predecessor_legacy(predecessor, trans_id)
+            self.handle_no_predecessor_legacy(node, trans_id)
+            self.transactions[trans_id].execute()
+            #self.clean_root()
+            #self.transactions[trans_id].execute()
         del self.transactions[trans_id]
+
 
 
     
@@ -237,7 +274,9 @@ class Directed_graph:
         trans_id = self._gen_id_transaction()
         self.transactions[trans_id] = self.connexion.pipeline()
 
-        for successor in self.get_successors(node):
+        successors = self.get_successors(node)
+        predecessors = self.get_predecessors(node)
+        for successor in successors:
             #here, only handle the succesors
             #(node will be removed completely later)
             self._remove_predecessor(successor, node, trans_id)
@@ -250,7 +289,7 @@ class Directed_graph:
                 }
             )
 
-        for predecessor in self.get_predecessors(node):
+        for predecessor in predecessors:
             #here, only handle the predecessor
             #(node will be removed completely later)
             self._remove_successor(predecessor, node, trans_id)
@@ -283,7 +322,18 @@ class Directed_graph:
         self.transactions[trans_id].delete(redis_key)
 
         self.transactions[trans_id].execute()
+
+        #if we use older versions of redis server or redis-python, no lua script
+        if self.legacy_mode:
+            for successor in successors:
+                self.handle_no_predecessor_legacy(successor, trans_id)
+            for predecessor in predecessors:
+                self.handle_no_predecessor_legacy(predecessor, trans_id)
+            self.transactions[trans_id].execute()
+            #self.clean_root(trans_id)
+            #self.transactions[trans_id].execute()
         del self.transactions[trans_id]
+
 
 
     def get_successors(self, node):
@@ -502,6 +552,9 @@ class Directed_graph:
             as predecessor
         node: node name (string)
         """
+        if self.legacy_mode:
+            return
+
         if not self.has_root:
             return
 
@@ -511,3 +564,37 @@ class Directed_graph:
         redis_key = self._gen_key(node, ['predecessors', ])
         self.handle_no_predecessor_script(args=[node, redis_key],
                 client=self.transactions[trans_id])
+
+    def clean_root(self, trans_id):
+        successors = self.get_successors(self.root)
+        for successor in successors:
+            redis_key = self._gen_key(successor, ['attributs_list', ])
+            if self.connexion.exists(redis_key) == 0:
+    #            print(successor)
+                self._remove_successor(self.root, successor, trans_id)
+        return
+
+    def handle_no_predecessor_legacy(self, node, trans_id):
+        """handle root, if node has no predecessor, graph root becomes
+             its predecessor
+        if node as graph root and another node, remove graph root 
+            as predecessor
+        node: node name (string)
+        """
+        if not self.has_root:
+            return
+
+        if node == self.root:
+            return
+
+        redis_key = self._gen_key(node, ['predecessors', ])
+
+        rootismember = self.connexion.sismember(redis_key, self.root)
+        card = self.connexion.scard(redis_key)
+        if card == 0:
+            self._add_predecessor(node, self.root, trans_id)
+            self._add_successor(self.root, node, trans_id)
+
+        elif card > 1 and rootismember == 1:
+            self._remove_predecessor(node, self.root, trans_id)
+            self._remove_successor(self.root, node, trans_id)
