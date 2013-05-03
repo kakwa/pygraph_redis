@@ -157,6 +157,76 @@ def main():
  
  
     clean()
+    print(GREEN + "printing attributs list after cleaning (must be empty)")
+
+    #printing some predecessors or successors
+    name = graph.root
+    got = graph.get_successors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
+    got = graph.get_predecessors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "predecessors") == 1:
+        return 1
+ 
+    name = node1
+    got = graph.get_successors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
+    got = graph.get_predecessors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "predecessors") == 1:
+        return 1
+ 
+    name = node2
+    got = graph.get_successors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
+    got = graph.get_predecessors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "predecessors") == 1:
+        return 1
+ 
+    name = node3
+    got = graph.get_successors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
+    got = graph.get_predecessors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "predecessors") == 1:
+        return 1
+ 
+    name = node4
+    got = graph.get_successors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
+    got = graph.get_predecessors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "predecessors") == 1:
+        return 1
+ 
+    name = node5
+    got = graph.get_successors(name)
+    expected = set([])
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
+    got = graph.get_predecessors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "predecessors") == 1:
+        return 1
+ 
+
     return 0
 
 if __name__ == "__main__":
