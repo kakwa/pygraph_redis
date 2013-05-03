@@ -259,8 +259,8 @@ class Directed_graph:
                 self.handle_no_predecessor_legacy(predecessor, trans_id)
             self.handle_no_predecessor_legacy(node, trans_id)
             self.transactions[trans_id].execute()
-            #self.clean_root()
-            #self.transactions[trans_id].execute()
+            self.clean_root()
+            self.transactions[trans_id].execute()
         del self.transactions[trans_id]
 
 
@@ -330,8 +330,8 @@ class Directed_graph:
             for predecessor in predecessors:
                 self.handle_no_predecessor_legacy(predecessor, trans_id)
             self.transactions[trans_id].execute()
-            #self.clean_root(trans_id)
-            #self.transactions[trans_id].execute()
+            self.clean_root(trans_id)
+            self.transactions[trans_id].execute()
         del self.transactions[trans_id]
 
 
