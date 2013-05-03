@@ -87,24 +87,43 @@ class Directed_graph:
             #a small lua script to remove all the attributes of a given node
             # first arg is the node name, second arg is the node attributs key
             self.lua_remove_all_attributs = ("""
-            local rootismember = redis.call('SISMEMBER', ARGV[2], '%(ROOT)s')
-            local card = redis.call('SCARD', ARGV[2])
-            if card == 0 
-                then redis.call('SADD', ARGV[2], '%(ROOT)s')
-                     redis.call('SADD', '%(ROOTSUCC)s', ARGV[1])
+            local attributs = redis.call('SMEMBERS', ARGV[1]..'%(sep)sattributs_list')
+            for i, attribut in ipairs(attributs) do
+                redis.call('DEL', ARGV[1]..'%(sep)sattribut_type%(sep)s'..attribut)
+                redis.call('DEL', ARGV[1]..'%(sep)sattribut%(sep)s'..attribut)
             end
-            if card > 1 and rootismember == 1
-            then redis.call('SREM', ARGV[2], '%(ROOT)s')
-                 redis.call('SREM', '%(ROOTSUCC)s', ARGV[1])
-            end
+            redis.call('DEL', ARGV[1]..'%(sep)sattribut_list')
             """ % {
-                'ROOTSUCC' : self._gen_key(self.root, ['successors', ]),
-                'ROOT' : self.root
+                'sep' : self.separator
                 }
             )
+
             #we register the script
-            self.remove_all_attributes = self.connexion.register_script(
+            #<graph name><sep><node_name><sep><variable_name>[<sep><other>]*
+            self.remove_all_attributes_script = self.connexion.register_script(
                     self.lua_remove_all_attributs)
+
+            #a small lua script to remove a node from its predecessors and successors
+            # first arg is the node name
+            self.lua_remove_node_successors_predecessors = ("""
+            local predecessors = redis.call('SMEMBERS', '%(graph)s%(sep)s'..ARGV[1]..'%(sep)spredecessors')
+            local successors = redis.call('SMEMBERS', '%(graph)s%(sep)s'..ARGV[1]..'%(sep)ssuccessors')
+            for i, predecessor in ipairs(predecessors) do
+                redis.call('SREM', '%(graph)s%(sep)s'..predecessor..'%(sep)ssuccessors', ARGV[1])
+            end
+            for i, successor in ipairs(successors) do
+                redis.call('SREM', '%(graph)s%(sep)s'..successor..'%(sep)spredecessors', ARGV[1])
+            end
+            """ % {
+                'sep' : self.separator, 
+                'graph' : self.graph
+                }
+            )
+
+            #we register the script
+            self.remove_node_successors_predecessors_script = self.connexion.register_script(
+                    self.lua_remove_node_successors_predecessors)
+
 
 
 
@@ -274,37 +293,48 @@ class Directed_graph:
         trans_id = self._gen_id_transaction()
         self.transactions[trans_id] = self.connexion.pipeline()
 
-        successors = self.get_successors(node)
-        predecessors = self.get_predecessors(node)
-        for successor in successors:
-            #here, only handle the succesors
-            #(node will be removed completely later)
-            self._remove_predecessor(successor, node, trans_id)
-            self.handle_no_predecessor(successor, trans_id)
+        if self.legacy_mode:
+            successors = self.get_successors(node)
+            predecessors = self.get_predecessors(node)
 
-            self.logger.debug("ensure node %(node)s is no longer"\
-                " predecessor of %(successor)s" % {
-                'successor': successor, 
-                'node': node
-                }
-            )
+            for attribut_name in self.get_attributs_list(node):
+                #remove each attribut of the node
+                self._remove_attribut(node, attribut_name, trans_id)
 
-        for predecessor in predecessors:
-            #here, only handle the predecessor
-            #(node will be removed completely later)
-            self._remove_successor(predecessor, node, trans_id)
-            self.handle_no_predecessor(predecessor, trans_id)
+            for successor in successors:
+                #here, only handle the succesors
+                #(node will be removed completely later)
+                self._remove_predecessor(successor, node, trans_id)
+                self.handle_no_predecessor(successor, trans_id)
+ 
+                self.logger.debug("ensure node %(node)s is no longer"\
+                    " predecessor of %(successor)s" % {
+                    'successor': successor, 
+                    'node': node
+                    }
+                )
 
-            self.logger.debug("ensure node %(node)s is no longer"\
-                " successor of %(predecessor)s" % {
-                'predecessor': predecessor,
-                'node': node
-                }
-            )
+            for predecessor in predecessors:
+                #here, only handle the predecessor
+                #(node will be removed completely later)
+                self._remove_successor(predecessor, node, trans_id)
+                self.handle_no_predecessor(predecessor, trans_id)
+ 
+                self.logger.debug("ensure node %(node)s is no longer"\
+                    " successor of %(predecessor)s" % {
+                    'predecessor': predecessor,
+                    'node': node
+                    }
+                )
 
-        for attribut_name in self.get_attributs_list(node):
-            #remove each attribut of the node
-            self._remove_attribut(node, attribut_name, trans_id)
+
+        else:
+            base_key = self._gen_key(node,[])
+            self.remove_all_attributes_script(args=[base_key], 
+                client=self.transactions[trans_id])
+            self.remove_node_successors_predecessors_script(args=[node],
+                client=self.transactions[trans_id])
+
 
         self.logger.debug("remove node %(node)s from database" % {
             'node': node
@@ -570,7 +600,6 @@ class Directed_graph:
         for successor in successors:
             redis_key = self._gen_key(successor, ['attributs_list', ])
             if self.connexion.exists(redis_key) == 0:
-    #            print(successor)
                 self._remove_successor(self.root, successor, trans_id)
         return
 
