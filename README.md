@@ -19,9 +19,14 @@ and its successors. A node can store some attributs (strings or sets of strings)
 Dependancies
 ============
 
-pygraph\_redis relies on redis and [![redis\_py]redis\_py](https://github.com/andymccurdy/redis-py).
+pygraph\_redis relies on [redis and](https://github.com/antirez/redis) and [redis\_py](https://github.com/andymccurdy/redis-py).
 
 For atomicity of transaction, it requieres lua scripting support (redis-py >= 2.7.0 and redis >= 2.6.0), but it provides a legacy mode, without atomicity for older redis and redis-py.
+
+Atomicity
+=========
+
+With proper versions, pygraph\_redis provided the atomicity of transaction when adding a node, atomicity when removing is on the way. 
 
 Installation
 ============
