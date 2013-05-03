@@ -156,11 +156,9 @@ class Directed_graph:
             value = attributs[attribut_name]
 
             self.logger.debug("adding attibut %(attribut_name)s"\
-                " with value %(value)s on"\
                     " node %(node)s" % {
                     'attribut_name': attribut_name,
-                    'value': value, 
-                    'node':node
+                    'node': node
                     }
             )
             #ensure that attribut_name doesn't contain the separator
@@ -440,7 +438,7 @@ class Directed_graph:
             }
         )
 
-        return self.connexion.smembers(redis_key)
+        return self._encode_set(self.connexion.smembers(redis_key))
 
     def _remove_predecessor(self, node, predecessor, trans_id):
         """remove a predecessor from a node

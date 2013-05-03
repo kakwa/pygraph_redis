@@ -4,6 +4,20 @@
 #importing directed_graph
 from pygraph_redis.directed_graph import Directed_graph
 import redis
+import sys
+
+def convert(seti):
+    if sys.version_info < (3, 0):
+        if type(seti) == type(set([])):
+            res = set([])
+            for i in seti:
+                res.add(i.decode('utf-8'))
+            return res
+        else:
+            return seti.decode('utf-8')
+    else:
+        return seti
+
 
 #creating the redis connexion
 r_server = redis.Redis("localhost")
@@ -24,11 +38,11 @@ def main():
     GREEN = '\033[92m'
 
     #adding some nodes
-    node1 = 'level_1_1'
-    node2 = 'level_1_2'
-    node3 = 'level_2_1'
-    node4 = 'level_2_2'
-    node5 = 'level_3_1'
+    node1 = convert('level_1_1☭')
+    node2 = convert('level_1_2')
+    node3 = convert('☭level_2_1')
+    node4 = convert('level_2_2')
+    node5 = convert('level_3_1')
 
     node1_predecessors = []
     node1_successors = [node3,node4]
@@ -66,7 +80,7 @@ def main():
             print(GREEN + node + " " + nature +": Ok")
 
 
-    attributes = {'☭jack': set(['1','2']), 'spare☭': '☭youpi'}
+    attributes = {convert('☭jack'): set([convert('1'),convert('2')]), convert('spare☭'): convert('☭youpi')}
  #
     graph.write_on_node(node3, node3_successors, node3_predecessors, attributes)
     graph.write_on_node(node4, node4_successors, node4_predecessors, attributes)
@@ -77,7 +91,7 @@ def main():
     #printing some predecessors or successors
     name = graph.root
     got = graph.get_successors(name)
-    expected = set([b'level_1_2', b'level_1_1']) 
+    expected = convert({'level_1_2', 'level_1_1☭'}) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
  
@@ -88,45 +102,45 @@ def main():
  
     name = node1
     got = graph.get_successors(name)
-    expected = set([b'level_2_1', b'level_2_2'])
+    expected = set([node3, node4]) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
  
     got = graph.get_predecessors(name)
-    expected = set([b'RO_@@@_OT'])
+    expected = set(['RO_@@@_OT'])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
  
     name = node2
     got = graph.get_successors(name)
-    expected = set([b'level_2_1', b'level_2_2'])
+    expected = set([node3, node4]) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
  
     got = graph.get_predecessors(name)
-    expected = set([b'RO_@@@_OT'])
+    expected = set(['RO_@@@_OT'])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
  
     name = node3
     got = graph.get_successors(name)
-    expected = set([b'level_3_1']) 
+    expected = set([node5]) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
  
     got = graph.get_predecessors(name)
-    expected = set([b'level_1_2', b'level_1_1'])
+    expected = set([node2, node1]) 
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
  
     name = node4
     got = graph.get_successors(name)
-    expected = set([b'level_3_1']) 
+    expected = set([node5]) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
  
     got = graph.get_predecessors(name)
-    expected = set([b'level_1_2', b'level_1_1'])
+    expected = set([node2, node1])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
  
@@ -137,7 +151,7 @@ def main():
         return 1
  
     got = graph.get_predecessors(name)
-    expected = set([b'level_2_1', b'level_2_2'])
+    expected = set([node3, node4])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
  
