@@ -16,6 +16,13 @@ pygraph\_redis is a simple library to manipulate directed graphs inside a redis 
 In this library, a graph is a bunch of nodes, each node knows its predecessors 
 and its successors. A node can store some attributs (strings or sets of strings).
 
+Dependancies
+============
+
+pygraph\_redis relies on redis and [![redis\_py]redis\_py](https://github.com/andymccurdy/redis-py).
+
+For atomicity of transaction, it requieres lua scripting support (redis-py >= 2.7.0 and redis >= 2.6.0), but it provides a legacy mode, without atomicity for older redis and redis-py.
+
 Installation
 ============
 
