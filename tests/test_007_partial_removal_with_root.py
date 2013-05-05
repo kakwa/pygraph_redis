@@ -31,7 +31,7 @@ def main():
     logger.parent.setLevel(logging.ERROR)
 
     #creating the graph object
-    graph = Directed_graph(r_server, 'uniq', logger)
+    graph = Directed_graph(r_server, 'uniq', logger, has_root = True)
 
     RED = '\033[91m'
     ORANGE = '\033[93m'
@@ -101,7 +101,7 @@ def main():
     #printing some predecessors or successors
     name = graph.root
     got = graph.get_successors(name)
-    expected = set([]) 
+    expected = set([node1, node2]) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
  
@@ -117,7 +117,7 @@ def main():
         return 1
  
     got = graph.get_predecessors(name)
-    expected = set([])
+    expected = set(['RO_@@@_OT'])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
  
@@ -128,7 +128,7 @@ def main():
         return 1
  
     got = graph.get_predecessors(name)
-    expected = set([])
+    expected = set(['RO_@@@_OT'])
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
  
@@ -173,7 +173,7 @@ def main():
     #printing some predecessors or successors
     name = graph.root
     got = graph.get_successors(name)
-    expected = set([]) 
+    expected = set([node4]) 
     if print_test(got, expected, name, "successors") == 1:
         return 1
  
@@ -222,7 +222,7 @@ def main():
         return 1
  
     got = graph.get_predecessors(name)
-    expected = set([]) 
+    expected = set(['RO_@@@_OT']) 
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
  
@@ -237,8 +237,49 @@ def main():
     if print_test(got, expected, name, "predecessors") == 1:
         return 1
 
-    clean2()
 
+    clean2()
+    print(GREEN + "printing attributs list after removing node[45]")
+
+    name = graph.root
+    got = graph.get_successors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
+    got = graph.get_predecessors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "predecessors") == 1:
+        return 1
+ 
+    name = node1
+    got = graph.get_successors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
+    got = graph.get_predecessors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "predecessors") == 1:
+        return 1
+ 
+    name = node2
+    got = graph.get_successors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
+    got = graph.get_predecessors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "predecessors") == 1:
+        return 1
+ 
+    name = node3
+    got = graph.get_successors(name)
+    expected = set([]) 
+    if print_test(got, expected, name, "successors") == 1:
+        return 1
+ 
     name = node4
     got = graph.get_successors(name)
     expected = set([]) 

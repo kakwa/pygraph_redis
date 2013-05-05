@@ -305,7 +305,7 @@ class Directed_graph:
                 #here, only handle the succesors
                 #(node will be removed completely later)
                 self._remove_predecessor(successor, node, trans_id)
-                self.handle_no_predecessor(successor, trans_id)
+                self.handle_no_predecessor_legacy(successor, trans_id)
  
                 self.logger.debug("ensure node %(node)s is no longer"\
                     " predecessor of %(successor)s" % {
@@ -317,8 +317,8 @@ class Directed_graph:
             for predecessor in predecessors:
                 #here, only handle the predecessor
                 #(node will be removed completely later)
-                self._remove_successor(predecessor, node, trans_id)
-                self.handle_no_predecessor(predecessor, trans_id)
+                self._remove_successor(node, predecessors, trans_id)
+                self.handle_no_predecessor_legacy(predecessor, trans_id)
  
                 self.logger.debug("ensure node %(node)s is no longer"\
                     " successor of %(predecessor)s" % {
@@ -326,8 +326,6 @@ class Directed_graph:
                     'node': node
                     }
                 )
-
-
         else:
             base_key = self._gen_key(node,[])
             self.remove_all_attributes_script(args=[base_key], 
