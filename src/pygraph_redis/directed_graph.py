@@ -110,18 +110,42 @@ class Directed_graph:
             local successors = redis.call('SMEMBERS', '%(graph)s%(sep)s'..ARGV[1]..'%(sep)ssuccessors')
             for i, predecessor in ipairs(predecessors) do
                 redis.call('SREM', '%(graph)s%(sep)s'..predecessor..'%(sep)ssuccessors', ARGV[1])
-            end
+                        end
             for i, successor in ipairs(successors) do
-                redis.call('SREM', '%(graph)s%(sep)s'..successor..'%(sep)spredecessors', ARGV[1])
-            end
+                local predecessors_key = '%(graph)s%(sep)s'..successor..'%(sep)spredecessors'
+                redis.call('SREM', predecessors_key, ARGV[1])
+            end 
             """ % {
                 'sep' : self.separator, 
                 'graph' : self.graph
                 }
             )
+            self.lua_handle_root_remove = ("""
+            for i, successor in ipairs(successors) do
+                local predecessors_key = '%(graph)s%(sep)s'..successor..'%(sep)spredecessors'
+                local card = redis.call('SCARD', predecessors_key)
+                if card == 0 
+                then redis.call('SADD', predecessors_key, '%(ROOT)s')
+                    redis.call('SADD', '%(ROOTSUCC)s', successor)
+                end
+            end
+            """ % {
+                'sep' : self.separator, 
+                'graph' : self.graph,
+                'ROOTSUCC' : self._gen_key(self.root, ['successors', ]),
+                'ROOT' : self.root
+                }
+            )
 
-            #we register the script
-            self.remove_node_successors_predecessors_script = self.connexion.register_script(
+            if has_root:
+                #we register the script
+                self.remove_node_successors_predecessors_script = self.connexion.register_script(
+                    self.lua_remove_node_successors_predecessors +
+                    self.lua_handle_root_remove
+                    )
+            else:
+                #we register the script
+                self.remove_node_successors_predecessors_script = self.connexion.register_script(
                     self.lua_remove_node_successors_predecessors)
 
 
@@ -282,9 +306,6 @@ class Directed_graph:
             self.transactions[trans_id].execute()
         del self.transactions[trans_id]
 
-
-
-    
     def remove_node(self, node):
         """completly remove a given node from the graph
         node: the name of the node (string)
