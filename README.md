@@ -158,7 +158,7 @@ mygraph2 = Directed_graph(r_server, u'mygraph2', logger, separator = u'mysep')
 
 #creating the graph object with a "root" (improper name, I know)
 mygraph2 = Directed_graph(r_server, u'mygraph2', logger, has_root = True)
-#"has\_root = True" ensures that every node has a predecessor
+#"has_root = True" ensures that every node has a predecessor
 #if enabled, a node has at least root as a predecessor, 
 #but if it has any other predecessor it doesn't have root as predecessor
 
