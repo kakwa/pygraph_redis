@@ -275,4 +275,4 @@ it must not be included in any node name or node attribut name (possible redis k
 About the logs
 --------------
 
-This library provides a lot of logs, most of them are debug, except possible redis key collision which is warning.
+This library provides a lot of logs, mainly debug, some info (ex: legacy modes), some warning (ex: possible key collision)
