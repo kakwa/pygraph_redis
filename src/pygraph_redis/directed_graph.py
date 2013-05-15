@@ -447,7 +447,7 @@ class Directed_graph:
 
     
     def _gen_transaction(self):
-        """function returning a transaction id"""
+        """function returning a transaction id and creating the associated pipeline"""
         trans_id = os.urandom(32)
         self.transactions[trans_id] = self.connexion.pipeline()
         #walk around redis-py bug (seen in at least 2.7.5)
