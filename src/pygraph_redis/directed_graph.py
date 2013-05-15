@@ -450,6 +450,9 @@ class Directed_graph:
         """function returning a transaction id"""
         trans_id = os.urandom(32)
         self.transactions[trans_id] = self.connexion.pipeline()
+        #walk around redis-py bug (seen in at least 2.7.5)
+        #https://github.com/kakwa/redis-py/commit/9e0ca54f3f147f5271fa7a1f0159c256bd5b1b84
+        self.transactions[trans_id].echo('')
         return trans_id
             
     def _gen_key(self, node, type_list):
