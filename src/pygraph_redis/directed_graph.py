@@ -168,8 +168,7 @@ class Directed_graph:
 
         self._ensure_not_separator(node)
 
-        trans_id = self._gen_id_transaction()
-        self.transactions[trans_id] = self.connexion.pipeline()
+        trans_id = self._gen_transaction()
     
         for successor in successors:
             #for each successor, adding "node"
@@ -247,7 +246,7 @@ class Directed_graph:
         attributs: attributes of the node (dictionnary or list of string)
         """
 
-        trans_id = self._gen_id_transaction()
+        trans_id = self._gen_transaction()
         self.transactions[trans_id] = self.connexion.pipeline()
 
         #removing the successors
@@ -311,8 +310,7 @@ class Directed_graph:
         node: the name of the node (string)
         """
 
-        trans_id = self._gen_id_transaction()
-        self.transactions[trans_id] = self.connexion.pipeline()
+        trans_id = self._gen_transaction()
 
         if self.legacy_mode:
             successors = self.get_successors(node)
@@ -448,9 +446,11 @@ class Directed_graph:
             return None 
 
     
-    def _gen_id_transaction(self):
+    def _gen_transaction(self):
         """function returning a transaction id"""
-        return os.urandom(32)
+        trans_id = os.urandom(32)
+        self.transactions[trans_id] = self.connexion.pipeline()
+        return trans_id
             
     def _gen_key(self, node, type_list):
         """generate the key
