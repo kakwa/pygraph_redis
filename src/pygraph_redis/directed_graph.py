@@ -419,6 +419,36 @@ class Directed_graph:
             res.add(i.decode('utf-8'))
         return res
 
+    def get_attribut_len(self, node, attribut_name):
+        """return the value of a given attribut of a node
+           node: the name of the node (string)
+           attribut_name: the name of the attribut (string)
+           return: the length of the attribut 
+                (0 if key does not exists)
+                (1 if key is a string)
+                (cardinal of the set if key is a set)
+        """
+
+        self.logger.debug("get attribut length of %(attribut_name)s"\
+            " of node %(node)s" % {
+            'attribut_name': attribut_name,
+            'node': node
+            }
+        )
+
+        #get the attribut value (different type handling)
+        redis_key = self._gen_key(node, ['attribut', attribut_name ])
+        #get the attribut type
+        key_type = self.connexion.type(redis_key).decode('utf-8')
+        if key_type == 'string':
+            return 1 
+        elif key_type == 'set':
+            return self.connexion.scard(redis_key)
+        else:
+            return 0
+
+
+
     def get_attribut(self, node, attribut_name):
         """return the value of a given attribut of a node
            node: the name of the node (string)
