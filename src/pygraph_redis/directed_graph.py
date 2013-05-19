@@ -48,7 +48,7 @@ class Directed_graph:
 
         #a small lua script to handle the has_root option
         # first arg is the node name, second arg is the node predecessors key
-        self.lua_handle_no_predecessor = ("""
+        self.lua__handle_no_predecessor = ("""
         local rootismember = redis.call('SISMEMBER', ARGV[2], '%(ROOT)s')
         local card = redis.call('SCARD', ARGV[2])
         if card == 0 
@@ -67,8 +67,8 @@ class Directed_graph:
 
         #we try to register the script
         try:
-            self.handle_no_predecessor_script = self.connexion.register_script(
-                self.lua_handle_no_predecessor)
+            self._handle_no_predecessor_script = self.connexion.register_script(
+                self.lua__handle_no_predecessor)
 
         except redis.exceptions.ResponseError:
             #server is to old for lua scripting
@@ -178,7 +178,7 @@ class Directed_graph:
             #as a successor of "node"
             self._add_successor(node, successor, trans_id)
             #handleling node with no predecessor
-            self.handle_no_predecessor(successor, trans_id)
+            self._handle_no_predecessor(successor, trans_id)
 
             self.logger.debug("ensure node %(node)s is predecessor"\
                 " of %(successor)s" % {
@@ -196,7 +196,7 @@ class Directed_graph:
             #as a predecessor of "node"
             self._add_predecessor(node, predecessor, trans_id)
             #handleling node with no predecessor
-            self.handle_no_predecessor(predecessor, trans_id)
+            self._handle_no_predecessor(predecessor, trans_id)
 
             self.logger.debug("ensure node %(node)s is successor"\
                 " of %(predecessor)s" % {
@@ -206,7 +206,7 @@ class Directed_graph:
                 )
 
         #handleling node with no predecessor
-        self.handle_no_predecessor(node, trans_id)
+        self._handle_no_predecessor(node, trans_id)
         
         #adding the attributs
         for attribut_name in attributs:
@@ -231,10 +231,10 @@ class Directed_graph:
         #if we use older versions of redis server or redis-python, no lua script
         if self.legacy_mode:
             for successor in successors:
-                self.handle_no_predecessor_legacy(successor, trans_id)
+                self._handle_no_predecessor_legacy(successor, trans_id)
             for predecessor in predecessors:
-                self.handle_no_predecessor_legacy(predecessor, trans_id)
-            self.handle_no_predecessor_legacy(node, trans_id)
+                self._handle_no_predecessor_legacy(predecessor, trans_id)
+            self._handle_no_predecessor_legacy(node, trans_id)
             self.transactions[trans_id].execute()
         del self.transactions[trans_id]
 
@@ -254,7 +254,7 @@ class Directed_graph:
             #reverse of write_on_node
             self._remove_predecessor(successor, node, trans_id)
             self._remove_successor(node, successor, trans_id)
-            self.handle_no_predecessor(successor, trans_id)
+            self._handle_no_predecessor(successor, trans_id)
 
             self.logger.debug("ensure node %(node)s is no longer"\
                 " predecessor of %(successor)s" % {
@@ -268,7 +268,7 @@ class Directed_graph:
             #reverse of write_on_node
             self._remove_predecessor(node, predecessor, trans_id)
             self._remove_successor(predecessor, node, trans_id)
-            self.handle_no_predecessor(predecessor, trans_id)
+            self._handle_no_predecessor(predecessor, trans_id)
 
             self.logger.debug("ensure node %(node)s is no longer"\
                 " successor of %(predecessor)s" % {
@@ -278,7 +278,7 @@ class Directed_graph:
             )
 
         #handleling the orphans
-        self.handle_no_predecessor(node, trans_id)
+        self._handle_no_predecessor(node, trans_id)
         
         #removing the attributs
         for attribut_name in attributs:
@@ -296,12 +296,12 @@ class Directed_graph:
         #if we use older versions of redis server or redis-python, no lua script
         if self.legacy_mode:
             for successor in successors:
-                self.handle_no_predecessor_legacy(successor, trans_id)
+                self._handle_no_predecessor_legacy(successor, trans_id)
             for predecessor in predecessors:
-                self.handle_no_predecessor_legacy(predecessor, trans_id)
-            self.handle_no_predecessor_legacy(node, trans_id)
+                self._handle_no_predecessor_legacy(predecessor, trans_id)
+            self._handle_no_predecessor_legacy(node, trans_id)
             self.transactions[trans_id].execute()
-            self.clean_root(trans_id)
+            self._clean_root(trans_id)
             self.transactions[trans_id].execute()
         del self.transactions[trans_id]
 
@@ -324,7 +324,7 @@ class Directed_graph:
                 #here, only handle the succesors
                 #(node will be removed completely later)
                 self._remove_predecessor(successor, node, trans_id)
-                self.handle_no_predecessor_legacy(successor, trans_id)
+                self._handle_no_predecessor_legacy(successor, trans_id)
  
                 self.logger.debug("ensure node %(node)s is no longer"\
                     " predecessor of %(successor)s" % {
@@ -337,7 +337,7 @@ class Directed_graph:
                 #here, only handle the predecessor
                 #(node will be removed completely later)
                 self._remove_successor(node, predecessors, trans_id)
-                self.handle_no_predecessor_legacy(predecessor, trans_id)
+                self._handle_no_predecessor_legacy(predecessor, trans_id)
  
                 self.logger.debug("ensure node %(node)s is no longer"\
                     " successor of %(predecessor)s" % {
@@ -373,11 +373,11 @@ class Directed_graph:
         #if we use older versions of redis server or redis-python, no lua script
         if self.legacy_mode:
             for successor in successors:
-                self.handle_no_predecessor_legacy(successor, trans_id)
+                self._handle_no_predecessor_legacy(successor, trans_id)
             for predecessor in predecessors:
-                self.handle_no_predecessor_legacy(predecessor, trans_id)
+                self._handle_no_predecessor_legacy(predecessor, trans_id)
             self.transactions[trans_id].execute()
-            self.clean_root(trans_id)
+            self._clean_root(trans_id)
             self.transactions[trans_id].execute()
         del self.transactions[trans_id]
 
@@ -597,7 +597,7 @@ class Directed_graph:
         'relative' : relative
         })
 
-    def handle_no_predecessor(self, node, trans_id):
+    def _handle_no_predecessor(self, node, trans_id):
         """handle root, if node has no predecessor, graph root becomes
              its predecessor
         if node as graph root and another node, remove graph root 
@@ -614,10 +614,10 @@ class Directed_graph:
             return
 
         redis_key = self._gen_key(node, ['predecessors', ])
-        self.handle_no_predecessor_script(args=[node, redis_key],
+        self._handle_no_predecessor_script(args=[node, redis_key],
                 client=self.transactions[trans_id])
 
-    def clean_root(self, trans_id):
+    def _clean_root(self, trans_id):
         successors = self.get_successors(self.root)
         for successor in successors:
             redis_key = self._gen_key(successor, ['attributs_list', ])
@@ -625,7 +625,7 @@ class Directed_graph:
                 self._remove_successor(self.root, successor, trans_id)
         return
 
-    def handle_no_predecessor_legacy(self, node, trans_id):
+    def _handle_no_predecessor_legacy(self, node, trans_id):
         """handle root, if node has no predecessor, graph root becomes
              its predecessor
         if node as graph root and another node, remove graph root 
