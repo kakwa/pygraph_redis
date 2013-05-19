@@ -31,7 +31,7 @@ def main():
     logger.parent.setLevel(logging.ERROR)
 
     #creating the graph object
-    graph = Directed_graph(r_server, 'uniq', logger, has_root = True)
+    graph = Directed_graph(r_server, 'uniq', logger, has_root = False)
 
     RED = '\033[91m'
     ORANGE = '\033[93m'
