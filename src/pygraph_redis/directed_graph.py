@@ -89,7 +89,6 @@ class Directed_graph:
             self.lua_remove_all_attributs = ("""
             local attributs = redis.call('SMEMBERS', ARGV[1]..'%(sep)sattributs_list')
             for i, attribut in ipairs(attributs) do
-                redis.call('DEL', ARGV[1]..'%(sep)sattribut_type%(sep)s'..attribut)
                 redis.call('DEL', ARGV[1]..'%(sep)sattribut%(sep)s'..attribut)
             end
             redis.call('DEL', ARGV[1]..'%(sep)sattribut_list')
@@ -508,8 +507,6 @@ class Directed_graph:
 
     def _remove_attribut(self, node, attribut_name, trans_id):
         redis_key = self._gen_key(node, ['attribut', attribut_name ])
-        self.transactions[trans_id].delete(redis_key)
-        redis_key = self._gen_key(node, ['attribut_type', attribut_name ])
         self.transactions[trans_id].delete(redis_key)
 
         redis_key = self._gen_key(node, ['attributs_list', ])
