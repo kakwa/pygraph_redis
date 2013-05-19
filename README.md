@@ -21,12 +21,12 @@ Dependancies
 
 pygraph\_redis relies on [redis](https://github.com/antirez/redis) and [redis-py](https://github.com/andymccurdy/redis-py).
 
-For atomicity of transaction, it requieres lua scripting support (redis-py >= 2.7.0 and redis >= 2.6.0), but it provides a legacy mode, without atomicity for older redis and redis-py.
+For atomicity of transaction, it requires lua scripting support (redis-py >= 2.7.0 and redis >= 2.6.0), but it provides a legacy mode, without atomicity for older redis and redis-py.
 
-Atomicity
-=========
+Write atomicity
+===============
 
-With proper versions, pygraph\_redis provided the atomicity of transaction when adding a node, atomicity when removing is on the way. 
+With proper versions, pygraph\_redis provided the atomicity of transaction when adding or removing a node.
 
 Installation
 ============
@@ -55,6 +55,16 @@ Cheat Sheet
 #    redis obj    |  unicode   |  logger obj 
 
 mygraph1 = Directed_graph(r_server, u'mygraph1', logger)
+
+#optional args:
+#   arg4    |    arg5  
+#-----------------------
+# separator | has_root 
+# unicode   |   bool   
+
+mygraph1 = Directed_graph(r_server, 
+    u'mygraph1', logger, u'mysep', True)
+)
 ```
 
 ```python
@@ -161,7 +171,6 @@ mygraph2 = Directed_graph(r_server, u'mygraph2', logger, has_root = True)
 #"has_root = True" ensures that every node has a predecessor
 #if enabled, a node has at least root as a predecessor, 
 #but if it has any other predecessor it doesn't have root as predecessor
-
 ```
 
 Node manipulation
@@ -181,6 +190,41 @@ mygraph1.write_on_node(u'm1',
     [u's1', u's2'],
     [u'p1', u'p2'],
     {u'attr1': set([u'51', u'69']), u'attr2': u'42'}
+)
+```
+About `successors` and `predecessors`, if node was already declared as a predecessor of one 
+of its successors, it's not necessary to add this successor in node successors set.
+Same with `predecessors`.
+
+example:
+
+```python
+mygraph1.write_on_node(u'pred',
+    [u'succ'],
+    [],
+    {}
+)
+
+mygraph1.write_on_node(u'succ',
+    [],
+    [],
+    {}
+)
+```
+
+Gives the same result that:
+
+```python
+mygraph1.write_on_node(u'pred',
+    [u'succ'],
+    [],
+    {}
+)
+
+mygraph1.write_on_node(u'succ',
+    [],
+    [u'pred'],
+    {}
 )
 ```
 
@@ -222,7 +266,6 @@ print set_of_attributs
 #get a specific attribut
 attr2 = mygraph1.get_attribut(u'm2', u'attr2')
 print attr2
-
 ```
 
 Graph navigation
