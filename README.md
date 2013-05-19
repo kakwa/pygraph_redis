@@ -119,7 +119,17 @@ mygraph1.get_attributs_list(u'm1')
 #  node name   | attribut name
 #   unicode    |    unicode
 
-mygraph1.get_attributs(u'm1', u'a2')
+mygraph1.get_attribut(u'm1', u'a2')
+```
+
+```python
+# get an attribut length
+#     arg1     |     arg2
+#--------------|--------------
+#  node name   | attribut name
+#   unicode    |    unicode
+
+mygraph1.get_attribut_len(u'm1', u'a2')
 ```
 
 ```python
@@ -266,6 +276,14 @@ print set_of_attributs
 #get a specific attribut
 attr2 = mygraph1.get_attribut(u'm2', u'attr2')
 print attr2
+
+#get a specific attribut length
+# 1 if it's a string
+# cardinal of set if it's a set
+# 0 if attribut doesn't exists
+attr2 = mygraph1.get_attribut_len(u'm2', u'attr2')
+print attr2
+
 ```
 
 Graph navigation
