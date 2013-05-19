@@ -48,7 +48,7 @@ class Directed_graph:
 
         #a small lua script to handle the has_root option
         # first arg is the node name, second arg is the node predecessors key
-        self.lua__handle_no_predecessor = ("""
+        self.lua_handle_no_predecessor = ("""
         local rootismember = redis.call('SISMEMBER', ARGV[2], '%(ROOT)s')
         local card = redis.call('SCARD', ARGV[2])
         if card == 0 
@@ -68,7 +68,7 @@ class Directed_graph:
         #we try to register the script
         try:
             self._handle_no_predecessor_script = self.connexion.register_script(
-                self.lua__handle_no_predecessor)
+                self.lua_handle_no_predecessor)
 
         except redis.exceptions.ResponseError:
             #server is to old for lua scripting
