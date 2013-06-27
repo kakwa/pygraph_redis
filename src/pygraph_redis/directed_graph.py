@@ -43,8 +43,14 @@ class Directed_graph:
                                                     #   (ultimate predecessor)
         self.transactions = {} #dictionnary of transactions
 
+        self.re_check_separator = re.compile(separator, 0) 
+                #compiled regular expression used to check 
+                #that separator is not in the key
+                #(warn about possible key collision)
+
         self.legacy_mode = False #small flag for a legacy mode 
         #(support of lua scripting in both python-redis and redis-server
+
 
         #a small lua script to handle the has_root option
         # first arg is the node name, second arg is the node predecessors key
@@ -408,17 +414,6 @@ class Directed_graph:
         redis_key = self._gen_key(node, ['attributs_list', ])
         return self._encode_set(self.connexion.smembers(redis_key))
 
-    def _encode_set(self, set_in):
-        """convert a set of bytes into a set of utf8
-           (redis gives us bytes, this lib output utf8)
-           set_in: set of bytes
-           return: same set, but utf-8
-        """
-        res = set([])
-        for i in set_in:
-            res.add(i.decode('utf-8'))
-        return res
-
     def get_attribut_len(self, node, attribut_name):
         """return the value of a given attribut of a node
            node: the name of the node (string)
@@ -447,8 +442,6 @@ class Directed_graph:
         else:
             return 0
 
-
-
     def get_attribut(self, node, attribut_name):
         """return the value of a given attribut of a node
            node: the name of the node (string)
@@ -474,6 +467,16 @@ class Directed_graph:
         else:
             return None 
 
+    def _encode_set(self, set_in):
+        """convert a set of bytes into a set of utf8
+           (redis gives us bytes, this lib output utf8)
+           set_in: set of bytes
+           return: same set, but utf-8
+        """
+        res = set([])
+        for entry in set_in:
+            res.add(entry.decode('utf-8'))
+        return res
     
     def _gen_transaction(self):
         """function returning a transaction id and creating the associated pipeline"""
@@ -497,8 +500,8 @@ class Directed_graph:
             'graph' : self.graph,
             'separator' :  self.separator
             }
-        for t in type_list:
-            key = key + self.separator + t
+        for subtype in type_list:
+            key = key + self.separator + subtype
         return key   
 
     def _add_attribut(self, node, attribut_name, value, trans_id):
@@ -506,6 +509,7 @@ class Directed_graph:
         node: the node name (string)
         attribut_name: name of the attribut (string)
         value: value of the attribut (string or set of string)
+        trans_id: a transaction ID (int)
         """
         #different handling for string or set of string
         if type(value) is str: 
@@ -536,14 +540,24 @@ class Directed_graph:
         self.transactions[trans_id].sadd(redis_key, attribut_name)
 
     def _remove_attribut(self, node, attribut_name, trans_id):
+        """remove an attribut from a node
+        node: the node name (string)
+        attribut_name: name of the attribut (string)
+        trans_id: a transaction ID (int)
+        """
         redis_key = self._gen_key(node, ['attribut', attribut_name ])
         self.transactions[trans_id].delete(redis_key)
-
         redis_key = self._gen_key(node, ['attributs_list', ])
         self.transactions[trans_id].srem(redis_key, attribut_name)
 
     def _ensure_not_separator(self, name):
-        test = re.search(self.separator, name,0)
+        """Check if the separator is contained in passed arg
+        if so, it returns 1 and issue a log (level warning)
+        otherwise, it returns 0
+        It is used to prevent key collision
+        name: the string to check (string)
+        """
+        test = self.re_check_separator.search(name)  
         if not test == None:
             self.logger.warning("attribut or node %(name)s already contains"\
                 " key separator %(sep)s, this could lead to"\
@@ -557,6 +571,10 @@ class Directed_graph:
             return 0
 
     def _get_relative(self, relative_type, node):
+        """get the relatives of a node (successors xor predecessors)
+        relative_type: type of relatives ('successors' or 'predecessors')
+        node: node to query (string)
+        """
         redis_key = self._gen_key(node, [relative_type, ])
 
         self.logger.debug("get %(relative_type)s of node %(node)s, "\
@@ -573,6 +591,7 @@ class Directed_graph:
         """remove a predecessor from a node
         node: the node name (string)
         predecessor: the predecessor name (string)
+        trans_id: a transaction ID (int)
         """
         self._remove_relative('predecessors', node, predecessor, trans_id)
 
@@ -580,6 +599,7 @@ class Directed_graph:
         """remove a successor from a node
         node: the node name (string)
         successor: the successor name (string)
+        trans_id: a transaction ID (int)
         """
         self._remove_relative('successors', node, successor, trans_id)
 
@@ -588,6 +608,7 @@ class Directed_graph:
         relative_type: "successors" or "predecessors" (string)
         node: node name (string)
         relative: name of the relative (string)
+        trans_id: a transaction ID (int)
         """
         redis_key = self._gen_key(node, [relative_type, ])
 
@@ -601,6 +622,7 @@ class Directed_graph:
         """add a successor to a node
         node: name of the node (string)
         relative: name of the successor (string)
+        trans_id: a transaction ID (int)
         """
         self._add_relative('successors', node, relative, trans_id)
 
@@ -608,6 +630,7 @@ class Directed_graph:
         """add a predecessor to a node
         node: name of the node (string)
         relative: name of the predecessor (string)
+        trans_id: a transaction ID (int)
         """
         self._add_relative('predecessors', node, relative, trans_id)
 
@@ -616,6 +639,7 @@ class Directed_graph:
         relative_type: "successors" or "predecessors" (string)
         node: node name (string)
         relative: name of the relative (string)
+        trans_id: a transaction ID (int)
         """
         redis_key = self._gen_key(node, [relative_type, ])
 
@@ -630,6 +654,7 @@ class Directed_graph:
         if node as graph root and another node, remove graph root 
             as predecessor
         node: node name (string)
+        trans_id: a transaction ID (int)
         """
         if self.legacy_mode:
             return
@@ -645,6 +670,11 @@ class Directed_graph:
                 client=self.transactions[trans_id])
 
     def _clean_root(self, trans_id):
+        """clean the root after a removal, it removes left-over former 
+        successors
+        used for legacy mode (no lua scripting)
+        trans_id: a transaction ID (int)
+        """
         successors = self.get_successors(self.root)
         for successor in successors:
             redis_key = self._gen_key(successor, ['attributs_list', ])
@@ -657,6 +687,7 @@ class Directed_graph:
              its predecessor
         if node as graph root and another node, remove graph root 
             as predecessor
+        used for legacy mode (no lua scripting)
         node: node name (string)
         """
         if not self.has_root:
