@@ -38,7 +38,7 @@ except ImportError:
 
 setup(
         name='pygraph_redis',
-        version='0.2.0',
+        version='0.2.1',
         description='Python Library to manipulate directed graphs in redis',
         long_description = description,
         author='Pierre-Francois Carpentier',
