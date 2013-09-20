@@ -243,6 +243,7 @@ Gives the same result that:
 
 
 .. sourcecode:: python
+
     mygraph1.write_on_node(u'succ',
         [],
         [u'pred'],
@@ -331,6 +332,7 @@ Redis key format:
 
 
 .. sourcecode:: none
+
   <graph name><sep><node_name><sep><variable_name>[<sep><other>]*
   
   <graph name>: name of the graph
