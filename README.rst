@@ -23,7 +23,7 @@ and its successors. A node can store some attributs (strings or sets of strings)
 Dependancies
 ============
 
-pygraph_redis relies on redis:target:https://github.com/antirez/redis and redis-py:target:https://github.com/andymccurdy/redis-py.
+pygraph_redis relies on `redis<https://github.com/antirez/redis>`_ and `redis-py<https://github.com/andymccurdy/redis-py>`_.
 
 For atomicity of transaction, it requires lua scripting support (redis-py >= 2.7.0 and redis >= 2.6.0), but it provides a legacy mode, without atomicity for older redis and redis-py.
 
@@ -85,7 +85,6 @@ Cheat Sheet
                            [u'p1'], 
                            {u'a3': set([u'69']), u'a2': u'42'}
     )
-    ```
     
 .. sourcecode:: python
 
@@ -96,7 +95,6 @@ Cheat Sheet
     #  unicode  | unicode list | unicode list | list of unicode 
     
     mygraph1.write_off_node(u'm1', [u's2'], [u'p1'], [u'attr3', u'attr2']
-    ```
     
 .. sourcecode:: python
 
@@ -107,7 +105,6 @@ Cheat Sheet
     #   unicode   
     
     mygraph1.remove_node(u'm1')
-    ```
     
 .. sourcecode:: python
 
@@ -118,7 +115,6 @@ Cheat Sheet
     #   unicode   
     
     mygraph1.get_attributs_list(u'm1')
-    ```
     
 .. sourcecode:: python
 
@@ -129,7 +125,6 @@ Cheat Sheet
     #   unicode    |    unicode
     
     mygraph1.get_attribut(u'm1', u'a2')
-    ```
     
 .. sourcecode:: python
 
@@ -140,7 +135,6 @@ Cheat Sheet
     #   unicode    |    unicode
     
     mygraph1.get_attribut_len(u'm1', u'a2')
-    ```
     
 .. sourcecode:: python
 
@@ -151,7 +145,6 @@ Cheat Sheet
     #   unicode   
     
     mygraph1.get_successors(u'm1')
-    ```
     
 .. sourcecode:: python
 
@@ -162,7 +155,7 @@ Cheat Sheet
     #   unicode   
     
     mygraph1.get_predecessors(u'm1')
-    ```
+
 Initialization
 --------------
 
