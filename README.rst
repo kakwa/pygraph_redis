@@ -30,7 +30,7 @@ For atomicity of transaction, it requires lua scripting support (redis-py >= 2.7
 Write atomicity
 ===============
 
-With proper versions, pygraph\_redis provided the atomicity of transaction when adding or removing a node.
+With proper versions, pygraph\_redis provides the atomicity of transaction when adding or removing a node.
 
 Installation
 ============
