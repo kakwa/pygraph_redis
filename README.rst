@@ -6,6 +6,9 @@ Simple python library to manipulate directed graphs in redis
 .. image:: https://secure.travis-ci.org/kakwa/pygraph_redis.png?branch=master
         :target: http://travis-ci.org/kakwa/pygraph_redis
 
+.. image:: https://pypip.in/d/pygraph_redis/badge.png
+    :target: https://crate.io/packages/pygraph_redis/
+    :alt: Number of PyPI downloads
 
 License
 =======
