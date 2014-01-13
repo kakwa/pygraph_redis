@@ -354,3 +354,9 @@ About the logs
 --------------
 
 This library provides a lot of logs, mainly debug, some info (ex: legacy modes), some warning (ex: possible key collision)
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/kakwa/pygraph_redis/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
