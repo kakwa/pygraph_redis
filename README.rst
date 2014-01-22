@@ -45,6 +45,10 @@ to install:
 
     $ python setup.py install
 
+    or
+
+    $ pip install pygraph_redis
+
 How to use
 ==========
 
