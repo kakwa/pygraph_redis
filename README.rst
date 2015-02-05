@@ -1,6 +1,10 @@
 pygraph_redis  
 ==============
 
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/kakwa/pygraph_redis
+   :target: https://gitter.im/kakwa/pygraph_redis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 Simple python library to manipulate directed graphs in redis
 
 .. image:: https://secure.travis-ci.org/kakwa/pygraph_redis.png?branch=master
