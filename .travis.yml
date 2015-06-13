@@ -6,7 +6,10 @@ python:
 # command to install dependencies
 install: 
   - pip install -e . --use-mirrors
+  - pip install coveralls
 # command to run tests
-script: "./run_test.sh"
-
+script: 
+  - coverage run --source=src/pygraph_redis setup.py test
+after_success:
+  - coveralls
 services: redis
