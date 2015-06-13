@@ -55,7 +55,6 @@ setup(
             "redis",
             ],
         packages = ['pygraph_redis',],
-        package_dir = {'': 'src'},
         classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
