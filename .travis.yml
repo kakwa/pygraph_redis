@@ -3,13 +3,14 @@ python:
   - "2.7"
   - "3.2"
   - "3.3"
+  - "3.4"
 # command to install dependencies
 install: 
   - pip install -e . --use-mirrors
   - pip install coveralls
 # command to run tests
 script: 
-  - coverage run --source=src/pygraph_redis setup.py test
+  - coverage run --source=pygraph_redis setup.py test
 after_success:
   - coveralls
 services: redis
