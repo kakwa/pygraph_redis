@@ -21,6 +21,11 @@ Simple python library to manipulate directed graphs in redis
    :alt: Join the chat at https://gitter.im/kakwa/pygraph_redis
    :target: https://gitter.im/kakwa/pygraph_redis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
    
+.. image:: https://coveralls.io/repos/kakwa/pygraph_redis/badge.svg
+  :target: https://coveralls.io/r/kakwa/pygraph_redis
+
+
+   
 License
 =======
 
