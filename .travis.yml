@@ -1,3 +1,4 @@
+services: redis
 language: python
 python:
   - "2.7"
@@ -13,4 +14,3 @@ script:
   - coverage run --source=pygraph_redis setup.py test
 after_success:
   - coveralls
-services: redis
