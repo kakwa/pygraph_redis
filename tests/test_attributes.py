@@ -65,7 +65,9 @@ def print_test(got,expected,node,nature):
         print(GREEN + node + " " + nature +": Ok")
         return 0
 
-def attributes_values():
+def attributes_values(legacy=False):
+    if legacy:
+        graph.legacy_mode = True
 
     create_graph()
     
@@ -74,6 +76,7 @@ def attributes_values():
     got = graph.get_attributs_list(name)
     expected = set([]) 
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node1
@@ -81,48 +84,56 @@ def attributes_values():
     expected = convert(set(['spare☭', '☭jack']))
 
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node2
     got = graph.get_attributs_list(name)
     expected = convert({'jacko', 'spare☭', 'bip'})
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node3
     got = graph.get_attributs_list(name)
     expected = convert({'☭jack', 'spare☭'})
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node4
     got = graph.get_attributs_list(name)
     expected = convert({'☭jack', 'spare☭'})
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node5
     got = graph.get_attributs_list(name)
     expected = convert({'jacko', 'spare☭', 'bip'})
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node5
     got = graph.get_attributs_list(name)
     expected = convert({'jacko', 'spare☭', 'bip'})
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node5
     got = graph.get_attribut(name,'jacko')
     expected =  convert(set(['1','2','test'] ))
     if print_test(got, expected, name, "attribut") == 1:
+        graph.legacy_mode = False
         return False
     
     name = node5
     got = graph.get_attribut(name,'spare☭')
     expected =  convert('☭youpi')
     if print_test(got, expected, name, "attribut") == 1:
+        graph.legacy_mode = False
         return False
 
     clean()
@@ -134,6 +145,7 @@ def attributes_values():
     got = graph.get_attributs_list(name)
     expected = set([]) 
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node1
@@ -141,41 +153,49 @@ def attributes_values():
     expected = set([])
 
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node2
     got = graph.get_attributs_list(name)
     expected = set([]) 
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node3
     got = graph.get_attributs_list(name)
     expected = set([]) 
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node4
     got = graph.get_attributs_list(name)
     expected = set([]) 
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node5
     got = graph.get_attributs_list(name)
     expected = set([]) 
     if print_test(got, expected, name, "attributs_list") == 1:
+        graph.legacy_mode = False
         return False
  
     name = node5
     got = graph.get_attribut(name,'spare☭')
     expected =  None
     if print_test(got, expected, name, "attribut") == 1:
+        graph.legacy_mode = False
         return False
  
     return True
 
-def attributes_len():
+def attributes_len(legacy=False):
+    if legacy:
+        graph.legacy_mode = True
     create_graph()
 
     #printing some attributs list
@@ -183,18 +203,21 @@ def attributes_len():
     got = graph.get_attribut_len(name,'jacko')
     expected = 3
     if print_test(got, expected, name, "attribut length") == 1:
+        graph.legacy_mode = False
         return False
 
     name = node5
     got = graph.get_attribut_len(name, convert('spare☭'))
     expected =  1
     if print_test(got, expected, name, "attribut length") == 1:
+        graph.legacy_mode = False
         return False
 
     name = node5
     got = graph.get_attribut_len(name, convert('spare☭_does_not_exists'))
     expected =  0
     if print_test(got, expected, name, "attribut length") == 1:
+        graph.legacy_mode = False
         return False
 
     clean()
@@ -208,6 +231,12 @@ class Test_attributs(unittest.TestCase):
 
     def test_attributes_len(self):
         assert attributes_len()
+
+    def test_attributes_values_legacy(self):
+        assert attributes_values(legacy=True)
+
+    def test_attributes_len_legacy(self):
+        assert attributes_len(legacy=True)
 
 
 def main():
